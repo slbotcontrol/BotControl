@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+#
+# bot2logout - logout a LifeBot to a specified location and sit target
+#
+# Usage: bot2logout [-n name] [-l location] [-u uuid]
+
+# Default bot
+DEF_BOT="Anya"
+# All bots
+#ALL_BOTS="Angel Anya Easy"
+ALL_BOTS="Anya"
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_lb=$(type -p lifebot)
+[ "${have_lb}" ] || {
+  echo "ERROR: cannot locate lifebot in PATH"
+  exit 1
+}
+
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || {
+  echo "ERROR: cannot locate jq in PATH"
+  exit 1
+}
+
+usage() {
+  printf "\nUsage: bot2logout [-A] [-n name]\n\n"
+  printf "\nWhere:"
+  printf "\n\t-A indicates logout all bots"
+  printf "\n\t\tAll Bots = ${ALL_BOTS}"
+  printf "\n\t-n name specifies the BOT name [default: ${DEF_BOT}]\n\n"
+  exit 1
+}
+
+BOT=
+allbots=
+while getopts ":An:h" flag; do
+  case $flag in
+    A)
+      allbots=1
+      ;;
+    n)
+      BOT="$OPTARG"
+      ;;
+    h)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ "${BOT}" ] || BOT="${DEF_BOT}"
+
+if [ "${allbots}" ]; then
+  for bot in ${ALL_BOTS}
+  do
+    lifebot -a logout -n ${bot}
+    sleep 3
+  done
+else
+  lifebot -a logout -n ${BOT}
+fi
