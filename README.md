@@ -9,7 +9,9 @@ with `-c <bot name or alias>`.
 > The most advanced bot platform for Second Life. From AI characters to
 > complete group automation, we've got everything your community needs.
 
-I cannot disagree - `LifeBots` is the most advanced bot platform for Second Life.
+I cannot disagree - `LifeBots` is the most advanced bot platform for Second Life. However,
+`Corrade` can be self-hosted and offers a very rich API making it a reasonable free
+alternative to the cloud based subscription service `LifeBots` offers.
 
 `LifeBots` offers 2 subscription plans, `Lite` and `Full`. The plans provide these features:
 
@@ -39,13 +41,15 @@ For developers who wish to script `LifeBots` management, command, and control,
 the `LifeBots Control Panel` provides and easy to use in-world interface to the
 `LifeBots API`, enabling the automation of many of the rich `LifeBots` feature set.
 
-For those power users who wish to automate their `LifeBots` using the command line
-and tools such as `cron` and `jq` the `botctrl` command and associated utilities
-found here may provide additional power and flexibility. The `BotControl` command line
-management system is open source and free to download, deploy, modify, and distribute.
+For those power users who wish to automate their `Corrade` and `LifeBots` bots using
+the command line and tools such as `cron` and `jq` the `botctrl` command and associated
+utilities found here may provide additional power and flexibility.
 
-`LifeBots` managed by the `botctrl` command line and scheduled using the Unix
-`cron` facility can be viewed and interacted with in Second Life at the
+The `BotControl` command line management system is open source and free to download,
+deploy, modify, and distribute.
+
+`Corrade` and `LifeBots` bots managed by the `botctrl` command line and scheduled using
+the Unix `cron` facility can be viewed and interacted with in Second Life at the
 [Truth & Beauty Lab](http://maps.secondlife.com/secondlife/Brightbrook%20Isle/56/135/23)
 or [Club Truth & Beauty](http://maps.secondlife.com/secondlife/Scylla/226/32/78).
 
@@ -93,25 +97,24 @@ function properly but the bulk of the system will function without `jq`.
 To install `botctrl`:
 
 ```bash
-git clone https://github.com/missyrestless/Bots.git
-cd Bots
-./install-botctrl
+git clone https://github.com/missyrestless/BotControl.git
+cd BotControl
+./install
 ```
 
 Or, you can use the `curl` command to install `botctrl` with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/missyrestless/Bots/refs/heads/main/install-botctrl | bash
+curl -fsSL https://raw.githubusercontent.com/missyrestless/BotControl/refs/heads/main/install | bash
 ```
 
-Alternatively, download the `install-botctrl` release artifact and
-execute it. The `install-botctrl` script will clone the repository
-and install the system:
+Alternatively, download the `install` release artifact and execute it.
+The `install` script will clone the repository and install the system:
 
 ```bash
-wget -q https://github.com/missyrestless/Bots/releases/latest/download/install-botctrl
-chmod 755 install-botctrl
-./install-botctrl
+wget -q https://github.com/missyrestless/BotControl/releases/latest/download/install
+chmod 755 install
+./install
 ```
 
 ### Configure Corrade for use with the botctrl command
@@ -153,7 +156,7 @@ The `botctrl` command is installed in `/usr/local/bin` along with some
 utility scripts for use with `cron` or other management systems. These
 utility scripts will need to be modified to suit your specific needs,
 configuration and bot names. You can modify the scripts in
-`BotControl/bin/` and re-run `./install-botctrl`.
+`bin/` and re-run `./install`.
 
 Add `/usr/local/bin` to your execution `PATH` if it is not already included.
 
@@ -2118,7 +2121,7 @@ SHELL=/bin/bash
 # Schedule BotControl actions
 # -------------------------
 # Uses the botctrl command line tool at:
-#   https://github.com/missyrestless/Bots/blob/main/BotControl/botctrl
+#   https://github.com/missyrestless/BotControl/blob/main/botctrl
 # Assumes some configuration in ~/.botctrl has been performed
 #
 # m h  dom mon dow   command
@@ -2515,7 +2518,7 @@ or
 man botctrl
 ```
 
-Issues can be reported at https://github.com/missyrestless/Bots/issues
+Issues can be reported at https://github.com/missyrestless/BotControl/issues
 
 ## LifeBots Control Panel
 
