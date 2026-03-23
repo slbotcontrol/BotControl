@@ -541,16 +541,16 @@ Examples:
   botctrl -a stand -n Jane -c John # Jane bot sends the stand command to Corrade bot John
   botctrl -a teleport -l club  # Uses a 'club' location alias defined in .botctrl
 Supported Actions
-Supported LifeBots actions:
-  login, logout, status, bot_location, walkto, sit, stand, teleport, listalias, key2name, notecard_create,
-  avatar_picks, name2key, listinventory, im, reply_dialog, send_notice, send_group_im, attachments,
-  rebake, touch_attachment, touch_prim, activate_group, wear, takeoff, say_chat_channel, set_hoverheight,
-  get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object
-Supported Corrade actions:
-  activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,
-  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im, cwd
-  inventory list current outfit, inventory list outfits, login, logout, pay avatar, pay object
-  say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear
+Supported actions common to both Corrade and LifeBots:
+  activate_group, attachments, get_balance, get_outfit, get_outfits, give_money,
+  give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,
+  rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight, sit, stand,
+  takeoff, teleport, touch_prim, walkto, wear, wear_outfit
+Supported actions for LifeBots only:
+  avatar_picks, bot_location, give_inventory, reply_dialog, status, touch_attachment
+Supported actions for Corrade only:
+  attach, conference, conference_detail, conference_list, createlandmark, detach,
+  fly, flyto, getattachmentspath, get_hoverheight, getmembersonline, inventory cwd
 ```
 
 </details>

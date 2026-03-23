@@ -324,36 +324,36 @@ exits
 \f[V]-h\f[R] : displays this usage message and exits
 .SS Supported Actions
 .IP \[bu] 2
-Supported LifeBots actions:
+Supported actions common to both Corrade and LifeBots:
 .RS 2
 .IP \[bu] 2
-login, logout, status, bot_location, walkto, sit, stand, teleport,
-listalias, key2name, notecard_create,
+activate_group, attachments, get_balance, get_outfit, get_outfits,
+give_money,
 .IP \[bu] 2
-avatar_picks, name2key, listinventory, im, reply_dialog, send_notice,
-send_group_im, attachments,
+give_money_object, im, key2name, listinventory, login, logout, name2key,
+notecard_create,
 .IP \[bu] 2
-rebake, touch_attachment, touch_prim, activate_group, wear, takeoff,
-say_chat_channel, set_hoverheight,
+rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,
+sit, stand,
 .IP \[bu] 2
-get_outfit, get_outfits, wear_outfit, get_balance, give_inventory,
-give_money, give_money_object
+takeoff, teleport, touch_prim, walkto, wear, wear_outfit
 .RE
 .IP \[bu] 2
-Supported Corrade actions:
+Supported actions for LifeBots only:
 .RS 2
 .IP \[bu] 2
-activate_group, attach, batchavatarkeytoname, batchavatarnametokey,
-changeappearance, createlandmark,
+avatar_picks, bot_location, give_inventory, reply_dialog, status,
+touch_attachment
+.RE
 .IP \[bu] 2
-createnotecard, detach, fly, flyto, getattachments, getattachmentspath,
-getmembersonline, im, cwd,
+Supported actions for Corrade only:
+.RS 2
 .IP \[bu] 2
-inventory list current outfit, inventory list outfits, login, logout,
-pay avatar, pay object
+attach, conference, conference_detail, conference_list, createlandmark,
+detach,
 .IP \[bu] 2
-say_chat_channel, send_group_im, send_notice, sit, stand, teleport,
-touch, unwear, walkto, wear
+fly, flyto, getattachmentspath, get_hoverheight, getmembersonline,
+inventory cwd
 .RE
 .SS ENVIRONMENT
 .PP
