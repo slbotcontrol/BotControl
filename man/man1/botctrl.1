@@ -28,8 +28,8 @@ lifebot - Manage LifeBots Second Life bots from the command line
 .SS SYNOPSIS
 .PP
 botctrl [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k
-apikey] [-T text] [-C channel] [-c corrade] [-F filter] [-M message] [-N
-name] [-O name] [-S subject] [-s secret] [-u uuid] [-z num]
+apikey] [-C channel] [-c corrade] [-D data] [-F filter] [-M message] [-N
+name] [-O name] [-S subject] [-s secret] [-T text] [-u uuid] [-z num]
 .PP
 See the BotControl Github repository
 README (https://github.com/missyrestless/BotControl) article for
@@ -293,6 +293,8 @@ dialog menus
 .PP
 \f[V]-C channel\f[R] : specifies the channel for a message [default: 0]
 .PP
+\f[V]-D data\f[R] : specifies a Corrade Manager class member
+.PP
 \f[V]-F filter\f[R] : specifies a filter to match when listing
 attachments
 .PP
@@ -324,36 +326,45 @@ exits
 \f[V]-h\f[R] : displays this usage message and exits
 .SS Supported Actions
 .IP \[bu] 2
+Supported actions for BotControl Configuration:
+.RS 2
+.IP \[bu] 2
+bot_alias, loc_alias, slurl_alias, uuid_alias, list_alias, alias
+.RE
+.IP \[bu] 2
 Supported actions common to both Corrade and LifeBots:
 .RS 2
 .IP \[bu] 2
 activate_group, attachments, get_balance, get_outfit, get_outfits,
-give_money,
+give_inventory, give_object,
 .IP \[bu] 2
-give_money_object, im, key2name, listinventory, login, logout, name2key,
-notecard_create,
+give_money, give_money_object, im, key2name, listinventory, login,
+logout, name2key,
 .IP \[bu] 2
-rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,
-sit, stand,
+notecard_create, rebake, say_chat_channel, send_group_im, send_notice,
+set_hoverheight,
 .IP \[bu] 2
-takeoff, teleport, touch_prim, walkto, wear, wear_outfit
+sit, stand, status, takeoff, teleport, touch_prim, walkto, wear,
+wear_outfit
 .RE
 .IP \[bu] 2
 Supported actions for LifeBots only:
 .RS 2
 .IP \[bu] 2
-avatar_picks, bot_location, give_inventory, reply_dialog, status,
-touch_attachment
+avatar_picks, bot_location, reply_dialog, touch_attachment
 .RE
 .IP \[bu] 2
 Supported actions for Corrade only:
 .RS 2
 .IP \[bu] 2
 attach, conference, conference_detail, conference_list, createlandmark,
-detach,
+currentsim,
 .IP \[bu] 2
-fly, flyto, getattachmentspath, get_hoverheight, getmembersonline,
-inventory cwd
+detach, fly, flyto, getattachmentspath, getgroupmemberdata,
+get_hoverheight,
+.IP \[bu] 2
+getmembersonline, getregiontop, getselfdata, inventory cwd,
+networkmanagerdata
 .RE
 .SS ENVIRONMENT
 .PP

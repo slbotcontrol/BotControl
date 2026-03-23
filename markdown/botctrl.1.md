@@ -18,8 +18,8 @@ lifebot - Manage LifeBots Second Life bots from the command line
 
 ## SYNOPSIS
 
-botctrl [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k apikey] [-T text] [-C channel]
-  [-c corrade] [-F filter] [-M message] [-N name] [-O name] [-S subject] [-s secret] [-u uuid] [-z num]
+botctrl [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k apikey] [-C channel] [-c corrade]
+  [-D data] [-F filter] [-M message] [-N name] [-O name] [-S subject] [-s secret] [-T text] [-u uuid] [-z num]
 
 See the [BotControl Github repository README](https://github.com/missyrestless/BotControl)
 article for additional information on the `botctrl` command and associated tools.
@@ -240,6 +240,8 @@ The following command line options are available with `botctrl`:
 
 `-C channel` : specifies the channel for a message [default: 0]
 
+`-D data` : specifies a Corrade Manager class member
+
 `-F filter` : specifies a filter to match when listing attachments
 
 `-M message` : specifies the message body for a group notice/im
@@ -266,16 +268,19 @@ The following command line options are available with `botctrl`:
 
 ### Supported Actions
 
+- Supported actions for BotControl Configuration:
+  - bot_alias, loc_alias, slurl_alias, uuid_alias, list_alias, alias
 - Supported actions common to both Corrade and LifeBots:
-  - activate_group, attachments, get_balance, get_outfit, get_outfits, give_money,
-  - give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,
-  - rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight, sit, stand,
-  - takeoff, teleport, touch_prim, walkto, wear, wear_outfit
+  - activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,
+  - give_money, give_money_object, im, key2name, listinventory, login, logout, name2key,
+  - notecard_create, rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,
+  - sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit
 - Supported actions for LifeBots only:
-  - avatar_picks, bot_location, give_inventory, reply_dialog, status, touch_attachment
+  - avatar_picks, bot_location, reply_dialog, touch_attachment
 - Supported actions for Corrade only:
-  - attach, conference, conference_detail, conference_list, createlandmark, detach,
-  - fly, flyto, getattachmentspath, get_hoverheight, getmembersonline, inventory cwd
+  - attach, conference, conference_detail, conference_list, createlandmark, currentsim,
+  - detach, fly, flyto, getattachmentspath, getgroupmemberdata, get_hoverheight,
+  - getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata
 
 ### ENVIRONMENT
 

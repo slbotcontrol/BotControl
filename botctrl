@@ -56,8 +56,8 @@ usage() {
     LINE=
     NORM=
   }
-  printf "\n${BOLD}${LINE}Usage:${NORM} ${BOLD}${SCRIPT_NAME} [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k apikey] [-C channel]"
-  printf "\n  [-c corrade] [-F filter] [-M message] [-N name] [-O name] [-S subject] [-s secret] [-T text] [-u uuid] [-z num]${NORM}"
+  printf "\n${BOLD}${LINE}Usage:${NORM} ${BOLD}${SCRIPT_NAME} [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k apikey] [-C channel] [-c corrade]"
+  printf "\n  [-D data] [-F filter] [-M message] [-N name] [-O name] [-S subject] [-s secret] [-T text] [-u uuid] [-z num]${NORM}"
   [ "$1" == "brief" ] && {
     printf "\n\n"
     exit 1
@@ -71,6 +71,7 @@ usage() {
   printf "\n\t${BOLD}${LINE}-A avatar${NORM} specifies an avatar UUID for use with giving money or objects"
   printf "\n\t${BOLD}${LINE}-C channel${NORM} specifies the channel for a message [default: 0]"
   printf "\n\t${BOLD}${LINE}-c corrade${NORM} specifies a Corrade bot name to act upon"
+  printf "\n\t${BOLD}${LINE}-D data${NORM} specifies a Corrade Manager class member"
   printf "\n\t${BOLD}${LINE}-F filter${NORM} specifies a filter to match when listing attachments"
   printf "\n\t${BOLD}${LINE}-M message${NORM} specifies the message body for a group notice/im"
   printf "\n\t${BOLD}${LINE}-N name${NORM} specifies the name of the recipient of an IM or landmark/notecard"
@@ -85,7 +86,7 @@ usage() {
   printf "\n\t${BOLD}${LINE}-e${NORM} displays a list of supported commands and examples then exits"
   printf "\n\t${BOLD}${LINE}-i${NORM} retrieves Bot details"
   printf "\n\t${BOLD}${LINE}-h${NORM} displays this usage message and exits"
-  printf "\n${BOLD}${LINE}Environment:${NORM}"
+  printf "\n\n${BOLD}${LINE}Environment:${NORM}"
   printf "\n  Entries in ~/.botctrl can be LB_API_KEY, LB_SECRET, or entries"
   printf "\n  of the form LB_SECRET_BOT_NAME in order to support multiple bots"
   printf "\n  Entries can specify a Slurl alias. For example:"
@@ -94,13 +95,13 @@ usage() {
   printf "\n  Entries can also specify a UUID alias. For example:"
   printf "\n    export UUID_Mover='xxxxxxxx-yyyy-zzzz-aaaa-bbbbbbbbbbbb'"
   printf "\n  A UUID alias can be used with the -u command line argument, e.g. -u Mover"
-  printf "\n${BOLD}${LINE}Examples:${NORM}"
+  printf "\n\n${BOLD}${LINE}Examples:${NORM}"
   printf "\n  ${SCRIPT_NAME}  # Displays the status of the default Bot"
   printf "\n  ${SCRIPT_NAME} -a login -l Home # Default Bot login to Home location"
   printf "\n  ${SCRIPT_NAME} -a touch_prim -n 'Jane Doe' -u Mover # Jane Doe bot touch object with aliased UUID"
   printf "\n  ${SCRIPT_NAME} -a stand -n Jane -c John # Jane bot sends the stand command to Corrade bot John"
   printf "\n  ${SCRIPT_NAME} -a teleport -l club  # Uses a 'club' location alias defined in .botctrl"
-  printf "\n${BOLD}${LINE}Supported Actions${NORM}"
+  printf "\n\n${BOLD}${LINE}Supported Actions${NORM}"
   list_supported_actions
   exit 1
 }
@@ -345,16 +346,19 @@ list_aliases() {
 }
 
 list_supported_actions() {
+  printf "\nSupported actions for BotControl Configuration:"
+  printf "\n  bot_alias, loc_alias, slurl_alias, uuid_alias, list_alias, alias"
   printf "\nSupported actions common to both Corrade and LifeBots:"
   printf "\n  activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,"
-  printf "\n  give_money, give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,"
-  printf "\n  rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight, sit, stand,"
-  printf "\n  takeoff, teleport, touch_prim, walkto, wear, wear_outfit"
+  printf "\n  give_money, give_money_object, im, key2name, listinventory, login, logout, name2key,"
+  printf "\n  notecard_create, rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,"
+  printf "\n  sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit"
   printf "\nSupported actions for LifeBots only:"
-  printf "\n  avatar_picks, bot_location, reply_dialog, status, touch_attachment"
+  printf "\n  avatar_picks, bot_location, reply_dialog, touch_attachment"
   printf "\nSupported actions for Corrade only:"
-  printf "\n  attach, conference, conference_detail, conference_list, createlandmark, detach,"
-  printf "\n  fly, flyto, getattachmentspath, get_hoverheight, getmembersonline, inventory cwd\n"
+  printf "\n  attach, conference, conference_detail, conference_list, createlandmark, currentsim,"
+  printf "\n  detach, fly, flyto, getattachmentspath, getgroupmemberdata, get_hoverheight,"
+  printf "\n  getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata\n"
 }
 
 get_coords() {
@@ -604,8 +608,37 @@ send_corrade_request() {
     stand)
       COMMAND="\"command\": \"stand\", \"deanimate\": \"True\""
       ;;
-    getmembersonline|status)
+    getmembersonline)
       COMMAND="\"command\": \"getmembersonline\""
+      ;;
+    online*|status)
+      COMMAND="\"command\": \"getgroupmemberdata\", \"agent\": \"${CORRADE_BOT_ID}\", \"data\": \"OnlineStatus\""
+      ;;
+    curr*sim|position)
+      COMMAND="\"command\": \"getnetworkdata\", \"data\": \"CurrentSim\""
+      ;;
+    get*top|top*script*)
+      COMMAND="\"command\": \"getregiontop\", \
+               \"type\": \"scripts\",
+               \"sift\": \"{ 'skip': '1', 'each': '5' }\""
+      ;;
+    *self*data)
+      [ "${DATA}" ] || DATA="Health"
+      COMMAND="\"command\": \"getselfdata\", \"data\": \"${DATA}\""
+      ;;
+    *member*data)
+      [ "${DATA}" ] || {
+        echo "The ${cmd} action requires a GroupMember structure member specified with -D DATA"
+        usage brief
+      }
+      COMMAND="\"command\": \"getgroupmemberdata\", \"agent\": \"${CORRADE_BOT_ID}\", \"data\": \"${DATA}\""
+      ;;
+    net*manager|net*data)
+      [ "${DATA}" ] || {
+        echo "The ${cmd} action requires a NetworkManager member specified with -D DATA"
+        usage brief
+      }
+      COMMAND="\"command\": \"getnetworkdata\", \"data\": \"${DATA}\""
       ;;
     teleport)
       POS=$(get_coords "${LOCATION}")
@@ -1101,7 +1134,7 @@ send_request() {
   fi
 }
 
-ACTION_STR= AMOUNT= AVATAR_UUID= BOT_NAME= FILTER= GROUP_ID=
+ACTION_STR= AMOUNT= AVATAR_UUID= BOT_NAME= DATA= FILTER= GROUP_ID=
 LOGIN_SITON= MESSAGE= OBJ_NAME= OUTFIT_NAME= SL_NAME= SUBJECT= TEXT=
 CORRADE_BOT_ID= CORRADE_BOT_NAME= CORRADE_BOT_URL= UUID= WEARABLE=
 
@@ -1115,8 +1148,11 @@ if [ "${SCRIPT_NAME}" == "corrade" ]; then
 else
   corrade=
 fi
+get_default_status=
+[ "$#" -eq 0 ] && get_default_status=1
+
 command_line_secret= details= dryrun= nobold= verb="-s"
-while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
+while getopts ":a:A:c:C:dD:ijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
   case $flag in
     a)
       ACTION_STR="${OPTARG}"
@@ -1133,6 +1169,9 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
     d)
       dryrun=1
       have_jq=
+      ;;
+    D)
+      DATA="${OPTARG}"
       ;;
     F)
       FILTER="${OPTARG}"
@@ -1722,10 +1761,15 @@ case "${ACTION}" in
     fi
     ;;
   status)
-    if [ "${have_jq}" ]; then
-      send_request "status" | jq -r .
+    if [ "${get_default_status}" ]; then
+      corrade -a status -n "${CO_BOT_NAME}"
+      lifebot -a status -n "${LB_BOT_NAME}"
     else
-      send_request "status"
+      if [ "${have_jq}" ]; then
+        send_request "status" | jq -r .
+      else
+        send_request "status"
+      fi
     fi
     ;;
   listgroups|groups)
@@ -1742,7 +1786,7 @@ case "${ACTION}" in
       send_request "listinventory"
     fi
     ;;
-  botalias*|localias*|slurlalias*|uuidalias*|listalias*|alias*)
+  bot*alias*|loc*alias*|slurl*alias*|uuid*alias*|list*alias*|alias*)
     list_aliases "${ACTION}"
     ;;
   login)
