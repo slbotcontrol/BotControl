@@ -3,7 +3,7 @@ SHELL=/bin/bash
 # Schedule BotControl actions
 # -------------------------
 # Uses the botctrl command line tool at:
-#   https://github.com/missyrestless/BotControl/blob/main/botctrl
+#   https://github.com/TruthInBeauty/BotControl/blob/main/botctrl
 # Assumes some configuration in ~/.botctrl has been performed
 #
 # m h  dom mon dow   command

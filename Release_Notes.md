@@ -2,14 +2,14 @@
 
 This release of the `botctrl` command line management system expands support for controlling `Corrade` bots from the command line, adding support for many additional Corrade API commands. In addition, the `install` script installs `jq` if not already present and installs example scripts in `/usr/local/BotControl/examples/`.
 
-The release includes the release artifact `install` which can be used to install the `botctrl` management system. See the [Install botctrl](#install-botctrl) section below for installation instructions. See the [repository README](https://github.com/missyrestless/BotControl#readme) for additional info and example `botctrl` command invocations.
+The release includes the release artifact `install` which can be used to install the `botctrl` management system. See the [Install botctrl](#install-botctrl) section below for installation instructions. See the [repository README](https://github.com/TruthInBeauty/BotControl#readme) for additional info and example `botctrl` command invocations.
 
 ## Install botctrl
 
 To install `botctrl`:
 
 ```bash
-git clone https://github.com/missyrestless/BotControl.git
+git clone https://github.com/TruthInBeauty/BotControl.git
 cd BotControl
 ./install
 ```
@@ -17,13 +17,13 @@ cd BotControl
 Or, you can use the `curl` command to install `botctrl` with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/missyrestless/BotControl/refs/heads/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/TruthInBeauty/BotControl/refs/heads/main/install | bash
 ```
 
 Alternatively, download the `install` release artifact and execute it. The `install` script will clone the repository and install the system:
 
 ```bash
-wget -q https://github.com/missyrestless/BotControl/releases/latest/download/install
+wget -q https://github.com/TruthInBeauty/BotControl/releases/latest/download/install
 chmod 755 install
 ./install
 ```
