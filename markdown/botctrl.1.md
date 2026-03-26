@@ -1,12 +1,12 @@
 ---
-title: BOTCTRL
+title: BOTCONTROL
 section: 1
 header: User Manual
 footer: botctrl 2.0.x
 date: November 23, 2025
 ---
 
-# BOTCTRL
+# BOTCONTROL
 
 ## NAME
 
