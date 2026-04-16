@@ -90,10 +90,11 @@ if [ -r "${FILE}" ]; then
   do
     [ "${uuid}" ] && {
       if [ "${LIFEBOT}" ]; then
-        lifebot -a key2name -n ${BOT} -u ${uuid} | jq -r .name
+        a_name=$(lifebot -a key2name -n "${BOT}" -u "${uuid}" | jq -r .name)
       else
-        corrade -a key2name -c ${BOT} -u ${uuid} | jq -r '.data[1]'
+        a_name=$(corrade -a key2name -n "${BOT}" -u "${uuid}" | jq -r '.data[1]')
       fi
+      echo "${a_name},${uuid}"
     }
   done
 else
