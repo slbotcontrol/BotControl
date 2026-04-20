@@ -50,6 +50,10 @@ LINE=$(tput smul 2> /dev/null)
 SCRIPT_FULL_PATH="$0"
 SCRIPT_NAME=$(basename "${SCRIPT_FULL_PATH}")
 
+info() { printf "%b[info]%b %s\n" '\e[0;32m\033[1m' '\e[0m' "$*" >&2; }
+warn() { printf "%b[warn]%b %s\n" '\e[0;33m\033[1m' '\e[0m' "$*" >&2; }
+erro() { printf "%b[error]%b %s\n" '\e[0;31m\033[1m' '\e[0m' "$*" >&2; }
+
 usage() {
   [ "${nobold}" ] && {
     BOLD=
@@ -247,10 +251,12 @@ is_valid_uuid() {
 # http://maps.secondlife.com/secondlife/RegionName/X/Y/Z
 is_valid_slurl() {
   local slurl="$1"
-  if [[ "$slurl" =~ ^secondlife://%[0-9a-fA-F]{2}|[a-zA-Z0-9_]+(/[0-9]+(\.[0-9]+)?(/[0-9]+(\.[0-9]+)?(/[0-9]+(\.[0-9]+)?)?)?)?$ ]]; then
+  local regex='secondlife://[-[:alnum:]\+&@#/%?=~_|!:,.;]*[-[:alnum:]\+&@#/%=~_|]'
+  if [[ ${slurl} =~ ${regex} ]]; then
     return 0 # Valid SLURL
   else
-    if [[ "$slurl" =~ ^http://maps.secondlife.com/secondlife/%[0-9a-fA-F]{2}|[a-zA-Z0-9_]+(/[0-9]+(\.[0-9]+)?(/[0-9]+(\.[0-9]+)?(/[0-9]+(\.[0-9]+)?)?)?)?$ ]]; then
+    regex='(https?|http)://maps.secondlife.com/secondlife/[-[:alnum:]\+&@#/%?=~_|!:,.;]*[-[:alnum:]\+&@#/%=~_|]'
+    if [[ ${slurl} =~ ${regex} ]]; then
       return 0 # Valid SLURL
     else
       return 1 # Invalid SLURL
@@ -276,7 +282,7 @@ is_valid_coords() {
 get_details() {
   local access_token="${LB_SECRET}"
   [ "${LB_BOT_ID}" ] || {
-    echo "No Bot ID set in .botctrl"
+    erro "No Bot ID set in .botctrl"
     usage
   }
   if [ "${dryrun}" ]; then
@@ -312,7 +318,7 @@ show_alias() {
       }
     done
   else
-    printf "\nNo ${astr} aliases defined in ${HOME}/.botctrl"
+    warn "No ${astr} aliases defined in ${HOME}/.botctrl"
   fi
 }
 
@@ -434,7 +440,7 @@ fixup_Outfits_JSON() {
 send_corrade_request() {
   local cmd="$1"
   [ "${cmd}" ] || {
-    echo "Empty command. Exiting."
+    erro "Empty command. Exiting."
     usage
   }
   # If the Corrade configuration specifies WAS ScriptLanguage:
@@ -454,7 +460,7 @@ send_corrade_request() {
       ;;
     attach|detach)
       [ "${UUID}" ] || {
-        echo "The ${cmd} action requires an inventory item UUID specified with -u UUID"
+        erro "The ${cmd} action requires an inventory item UUID specified with -u UUID"
         usage brief
       }
       if [ "${cmd}" == "attach" ]; then
@@ -474,18 +480,18 @@ send_corrade_request() {
       ;;
     conference|creat*confer*|confer*creat*)
       [ "${TEXT}" ] || {
-        echo "The ${cmd} action requires a comma separated list of avatar name/uuid specified with -T \"av1,av2,...\""
+        erro "The ${cmd} action requires a comma separated list of avatar name/uuid specified with -T \"av1,av2,...\""
         usage brief
       }
       is_valid_csv "${TEXT}" || {
-        echo "Not a valid comma separated list: ${TEXT}"
+        erro "Not a valid comma separated list: ${TEXT}"
         usage brief
       }
       COMMAND="\"command\": \"conference\", \"action\": \"create\", \"avatars\": \"${TEXT}\""
       ;;
     say*confer*|confer*say)
       [ "${UUID}" ] || {
-        echo "The ${cmd} action requires a conference session UUID specified with -u UUID"
+        erro "The ${cmd} action requires a conference session UUID specified with -u UUID"
         usage brief
       }
       COMMAND="\"command\": \"tell\", \"entity\": \"conference\", \"session\": \"${UUID}\", \"message\": \"${MESSAGE}\""
@@ -495,14 +501,14 @@ send_corrade_request() {
       ;;
     det*confer*|confer*det*)
       [ "${UUID}" ] || {
-        echo "The ${cmd} action requires a conference session UUID specified with -u UUID"
+        erro "The ${cmd} action requires a conference session UUID specified with -u UUID"
         usage brief
       }
       COMMAND="\"command\": \"conference\", \"action\": \"detail\", \"session\": \"${UUID}\""
       ;;
     creat*landmark|creat*lm)
       [ "${SL_NAME}" ] || {
-        echo "The ${cmd} action requires a Landmark Name specified with -N name"
+        erro "The ${cmd} action requires a Landmark Name specified with -N name"
         usage brief
       }
       COMMAND="\"command\": \"createlandmark\", \"name\": \"${SL_NAME}\""
@@ -607,7 +613,7 @@ send_corrade_request() {
         if [ "${OBJ_NAME}" ]; then
           cuuid="${OBJ_NAME}"
         else
-          echo "Corrade command ${cmd} requires object uuid or name"
+          erro "Corrade command ${cmd} requires object uuid or name"
           usage brief
         fi
       fi
@@ -640,14 +646,14 @@ send_corrade_request() {
       ;;
     *member*data)
       [ "${DATA}" ] || {
-        echo "The ${cmd} action requires a GroupMember structure member specified with -D DATA"
+        erro "The ${cmd} action requires a GroupMember structure member specified with -D DATA"
         usage brief
       }
       COMMAND="\"command\": \"getgroupmemberdata\", \"agent\": \"${CORRADE_BOT_ID}\", \"data\": \"${DATA}\""
       ;;
     net*manager|net*data)
       [ "${DATA}" ] || {
-        echo "The ${cmd} action requires a NetworkManager member specified with -D DATA"
+        erro "The ${cmd} action requires a NetworkManager member specified with -D DATA"
         usage brief
       }
       COMMAND="\"command\": \"getnetworkdata\", \"data\": \"${DATA}\""
@@ -680,12 +686,12 @@ send_corrade_request() {
       ;;
   esac
   [ "${COMMAND}" ] || {
-    echo "Corrade command ${cmd} not yet supported"
+    erro "Corrade command ${cmd} not yet supported"
     list_supported_actions
     usage brief
   }
   [ "${CORRADE_BOT_URL}" ] || {
-    echo "Corrade bot URL not set!"
+    erro "Corrade bot URL not set!"
     usage brief
   }
   if [ "${dryrun}" ]; then
@@ -736,7 +742,7 @@ send_corrade_request() {
 send_lifebot_request() {
   local act="$1"
   [ "${act}" ] || {
-    echo "Empty action. Exiting."
+    erro "Empty action. Exiting."
     usage
   }
   COMMON="\"action\": \"${act}\", \
@@ -1245,7 +1251,7 @@ while getopts ":a:A:c:C:dD:ijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
       usage
       ;;
     \?)
-      echo "Invalid option: $flag"
+      erro "Invalid option: $flag"
       usage
       ;;
   esac
@@ -1260,8 +1266,8 @@ shift $(( OPTIND - 1 ))
       # Both -c and -n were specified using the lifebot command, what to do?
       # I guess if they are both the same then continue, otherwise exit with usage
       [ "${CORRADE_BOT_NAME}" == "${BOT_NAME}" ] || {
-        echo "Both -c name and -n name cannot be specified when invoked using the lifebot command"
-        echo "Use the botctrl command to specify both -c and -n names, lifebot only controls LifeBots"
+        erro "Both -c name and -n name cannot be specified when invoked using the lifebot command"
+        info "Use the botctrl command to specify both -c and -n names, lifebot only controls LifeBots"
         usage brief
       }
     else
@@ -1361,7 +1367,7 @@ else
 fi
 
 [ "${LB_API_KEY}" ] && [ "${LB_SECRET}" ] || {
-  echo "LB_API_KEY and LB_SECRET must be set in the environment. Exiting."
+  erro "LB_API_KEY and LB_SECRET must be set in the environment. Exiting."
   exit 1
 }
 
@@ -1382,11 +1388,11 @@ fi
 case "${ACTION}" in
   walk*)
     [ "${LOCATION}" ] || {
-      echo "The ${ACTION} action requires coordinates specified with -l coords"
+      erro "The ${ACTION} action requires coordinates specified with -l coords"
       usage brief
     }
     [ "${LOCATION}" == "Last location" ] && {
-      echo "The ${ACTION} action requires coordinates specified with -l coords"
+      erro "The ${ACTION} action requires coordinates specified with -l coords"
       usage brief
     }
     # Strip all but last 3 fields from the location variable to get just the coordinates
@@ -1400,7 +1406,7 @@ case "${ACTION}" in
         send_request "walkto"
       fi
     else
-      echo "${LOCATION} is NOT valid Coordinates."
+      warn "${LOCATION} is NOT valid Coordinates."
     fi
     ;;
   sendnoti*|send_noti*)
@@ -1408,15 +1414,15 @@ case "${ACTION}" in
     if [ "${UUID}" ]; then
       GROUP_ID="${UUID}"
     else
-      echo "The ${ACTION} action requires a Group UUID specified with -u uuid"
+      erro "The ${ACTION} action requires a Group UUID specified with -u uuid"
       show_usage=1
     fi
     [ "${SUBJECT}" ] || {
-      echo "The ${ACTION} action requires a Subject specified with -S subject"
+      erro "The ${ACTION} action requires a Subject specified with -S subject"
       show_usage=1
     }
     [ "${MESSAGE}" ] || {
-      echo "The ${ACTION} action requires a Message body specified with -M message"
+      erro "The ${ACTION} action requires a Message body specified with -M message"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1436,11 +1442,11 @@ case "${ACTION}" in
   give|give_inv*|give_obj*)
     show_usage=
     [ "${AVATAR_UUID}" ] || {
-      echo "The ${ACTION} action requires an Avatar UUID specified with -A avatar-uuid"
+      erro "The ${ACTION} action requires an Avatar UUID specified with -A avatar-uuid"
       show_usage=1
     }
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires an inventory object UUID specified with -u uuid"
+      erro "The ${ACTION} action requires an inventory object UUID specified with -u uuid"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1453,11 +1459,11 @@ case "${ACTION}" in
     ;;
   note*creat*|creat*note*|nc*creat*|creat*nc*)
     [ "${SL_NAME}" ] || {
-      echo "The ${ACTION} action requires a Notecard Name specified with -N name"
+      erro "The ${ACTION} action requires a Notecard Name specified with -N name"
       usage brief
     }
     [ "${TEXT}" ] || {
-      echo "The ${ACTION} action requires a Notecard text specified with -T text"
+      erro "The ${ACTION} action requires a Notecard text specified with -T text"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1469,11 +1475,11 @@ case "${ACTION}" in
   pay_avatar|give_money)
     show_usage=
     [ "${AVATAR_UUID}" ] || {
-      echo "The ${ACTION} action requires an Avatar UUID specified with -A avatar-uuid"
+      erro "The ${ACTION} action requires an Avatar UUID specified with -A avatar-uuid"
       show_usage=1
     }
     [ "${AMOUNT}" ] || {
-      echo "The ${ACTION} action requires an amount to pay in L\$ specified with -z num"
+      erro "The ${ACTION} action requires an amount to pay in L\$ specified with -z num"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1485,18 +1491,18 @@ case "${ACTION}" in
         send_request "give_money"
       fi
     else
-      echo "Amount specified to pay must be a positive integer."
+      erro "Amount specified to pay must be a positive integer."
       usage brief
     fi
     ;;
   pay_object|give_money_object)
     show_usage=
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires an Object UUID specified with -u uuid"
+      erro "The ${ACTION} action requires an Object UUID specified with -u uuid"
       show_usage=1
     }
     [ "${AMOUNT}" ] || {
-      echo "The ${ACTION} action requires an amount to pay in L\$ specified with -z num"
+      erro "The ${ACTION} action requires an amount to pay in L\$ specified with -z num"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1509,7 +1515,7 @@ case "${ACTION}" in
         send_request "give_money_object"
       fi
     else
-      echo "Amount specified to pay must be a positive integer."
+      erro "Amount specified to pay must be a positive integer."
       usage brief
     fi
     ;;
@@ -1523,15 +1529,15 @@ case "${ACTION}" in
   reply*)
     show_usage=
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires an Object UUID specified with -u uuid"
+      erro "The ${ACTION} action requires an Object UUID specified with -u uuid"
       show_usage=1
     }
     [ "${TEXT}" ] || {
-      echo "The ${ACTION} action requires a button text specified with -T text"
+      erro "The ${ACTION} action requires a button text specified with -T text"
       show_usage=1
     }
     [ ${CHANNEL} -eq 0 ] && {
-      echo "The ${ACTION} action requires a non-zero channel specified with -C channel"
+      erro "The ${ACTION} action requires a non-zero channel specified with -C channel"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1545,7 +1551,7 @@ case "${ACTION}" in
     if [ "${UUID}" ]; then
       GROUP_ID="${UUID}"
     else
-      echo "The ${ACTION} action requires a Group UUID specified with -u uuid"
+      erro "The ${ACTION} action requires a Group UUID specified with -u uuid"
       usage brief
     fi
     if [ "${have_jq}" ]; then
@@ -1559,11 +1565,11 @@ case "${ACTION}" in
     if [ "${UUID}" ]; then
       GROUP_ID="${UUID}"
     else
-      echo "The ${ACTION} action requires a Group UUID specified with -u uuid"
+      erro "The ${ACTION} action requires a Group UUID specified with -u uuid"
       show_usage=1
     fi
     [ "${MESSAGE}" ] || {
-      echo "The ${ACTION} action requires a Message body specified with -M message"
+      erro "The ${ACTION} action requires a Message body specified with -M message"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1575,7 +1581,7 @@ case "${ACTION}" in
     ;;
   key*d*name)
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires an avatar UUID specified with -u uuid"
+      erro "The ${ACTION} action requires an avatar UUID specified with -u uuid"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1586,7 +1592,7 @@ case "${ACTION}" in
     ;;
   key*name)
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires an avatar UUID specified with -u uuid"
+      erro "The ${ACTION} action requires an avatar UUID specified with -u uuid"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1597,7 +1603,7 @@ case "${ACTION}" in
     ;;
   name*key)
     [ "${SL_NAME}" ] || {
-      echo "The ${ACTION} action requires an SL Name specified with -N name"
+      erro "The ${ACTION} action requires an SL Name specified with -N name"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1613,12 +1619,12 @@ case "${ACTION}" in
       if [ "${UUID}" ]; then
         SL_NAME="${UUID}"
       else
-        echo "The ${ACTION} action requires an SL Name or UUID specified with -N name or -u uuid"
+        erro "The ${ACTION} action requires an SL Name or UUID specified with -N name or -u uuid"
         show_usage=1
       fi
     }
     [ "${MESSAGE}" ] || {
-      echo "The ${ACTION} action requires a Message body specified with -M message"
+      erro "The ${ACTION} action requires a Message body specified with -M message"
       show_usage=1
     }
     [ "${show_usage}" ] && usage brief
@@ -1630,7 +1636,7 @@ case "${ACTION}" in
     ;;
   say*confer*|confer*say)
     [ "${MESSAGE}" ] || {
-      echo "The ${ACTION} action requires a Message body specified with -M message"
+      erro "The ${ACTION} action requires a Message body specified with -M message"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1641,7 +1647,7 @@ case "${ACTION}" in
     ;;
   say*|say_*)
     [ "${MESSAGE}" ] || {
-      echo "The ${ACTION} action requires a Message body specified with -M message"
+      erro "The ${ACTION} action requires a Message body specified with -M message"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1659,7 +1665,7 @@ case "${ACTION}" in
     ;;
   set*height*|set*hover*)
     [ "${HEIGHT}" ] || {
-      echo "The ${ACTION} action requires a hover height adjustment specified with -z num"
+      erro "The ${ACTION} action requires a hover height adjustment specified with -z num"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1670,7 +1676,7 @@ case "${ACTION}" in
     ;;
   takeoff|remove)
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires an item UUID to remove specified with -u uuid"
+      erro "The ${ACTION} action requires an item UUID to remove specified with -u uuid"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1683,12 +1689,12 @@ case "${ACTION}" in
     if [ "${corrade}" ]; then
       [ "${OBJ_NAME}" ] && WEARABLE="${OBJ_NAME}"
       [ "${WEARABLE}" ] || {
-        echo "The ${ACTION} action requires a path to an item to wear specified with -O '/path/to/item'"
+        erro "The ${ACTION} action requires a path to an item to wear specified with -O '/path/to/item'"
         usage brief
       }
     else
       [ "${UUID}" ] || {
-        echo "The ${ACTION} action requires an item UUID to wear specified with -u uuid"
+        erro "The ${ACTION} action requires an item UUID to wear specified with -u uuid"
         usage brief
       }
     fi
@@ -1701,7 +1707,7 @@ case "${ACTION}" in
   wear*|replace*outfit)
     [ "${OBJ_NAME}" ] && OUTFIT_NAME="${OBJ_NAME}"
     [ "${OUTFIT_NAME}" ] || {
-      echo "The ${ACTION} action requires an outfit name specified with -O name"
+      erro "The ${ACTION} action requires an outfit name specified with -O name"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1712,7 +1718,7 @@ case "${ACTION}" in
     ;;
   touch*attach*)
     [ "${OBJ_NAME}" ] || {
-      echo "The ${ACTION} action requires an attachment object name specified with -O name"
+      erro "The ${ACTION} action requires an attachment object name specified with -O name"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1723,7 +1729,7 @@ case "${ACTION}" in
     ;;
   touch*)
     [ "${UUID}" ] || {
-      echo "The ${ACTION} action requires a UUID specified with -u uuid"
+      erro "The ${ACTION} action requires a UUID specified with -u uuid"
       usage brief
     }
     if [ "${have_jq}" ]; then
@@ -1734,11 +1740,11 @@ case "${ACTION}" in
     ;;
   teleport|tp)
     [ "${LOCATION}" ] || {
-      echo "The teleport action requires a location specified with -l location"
+      erro "The teleport action requires a location specified with -l location"
       usage brief
     }
     [ "${LOCATION}" == "Last location" ] && {
-      echo "The teleport action requires a location specified with -l location"
+      erro "The teleport action requires a location specified with -l location"
       usage brief
     }
     if is_valid_slurl "${LOCATION}"; then
@@ -1750,12 +1756,12 @@ case "${ACTION}" in
         send_request "teleport"
       fi
     else
-      echo "${LOCATION} is NOT a valid SLURL."
+      erro "${LOCATION} is NOT a valid SLURL."
     fi
     ;;
   sit)
     [ "${UUID}" ] || {
-      echo "The sit action requires a UUID specified with -u uuid"
+      erro "The sit action requires a UUID specified with -u uuid"
       usage brief
     }
     send_request "stand" >/dev/null 2>&1
@@ -1862,7 +1868,7 @@ case "${ACTION}" in
     if [ "${corrade}" ]; then
       send_request "${ACTION}"
     else
-      echo "Action '${ACTION}' not yet supported"
+      erro "Action '${ACTION}' not yet supported"
       list_supported_actions
     fi
     ;;
