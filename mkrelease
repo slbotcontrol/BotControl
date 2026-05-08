@@ -64,6 +64,7 @@ tar cf - BotControl/install \
          BotControl/bin \
          BotControl/crontab.in \
          BotControl/example_dot_botctrl \
+         BotControl/examples \
          BotControl/LICENSE \
          BotControl/botctrl \
          BotControl/man \
