@@ -30,6 +30,7 @@
 # Set the default Bot name
 # Setting in .botctrl overrides, setting on command line with -n name overrides all
 LB_BOT_NAME="Anya Ordinary"
+CO_BOT_NAME="Easy Islay"
 # Set the default action, can be specified with -a action
 ACTION="status"
 # LifeBots API endpoint
@@ -345,12 +346,12 @@ list_aliases() {
 
 list_supported_actions() {
   printf "\nSupported actions common to both Corrade and LifeBots:"
-  printf "\n  activate_group, attachments, get_balance, get_outfit, get_outfits, give_money,"
-  printf "\n  give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,"
+  printf "\n  activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,"
+  printf "\n  give_money, give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,"
   printf "\n  rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight, sit, stand,"
   printf "\n  takeoff, teleport, touch_prim, walkto, wear, wear_outfit"
   printf "\nSupported actions for LifeBots only:"
-  printf "\n  avatar_picks, bot_location, give_inventory, reply_dialog, status, touch_attachment"
+  printf "\n  avatar_picks, bot_location, reply_dialog, status, touch_attachment"
   printf "\nSupported actions for Corrade only:"
   printf "\n  attach, conference, conference_detail, conference_list, createlandmark, detach,"
   printf "\n  fly, flyto, getattachmentspath, get_hoverheight, getmembersonline, inventory cwd\n"
@@ -526,6 +527,12 @@ send_corrade_request() {
       echo "${cmd}" | grep get_outfits >/dev/null && path="/My Inventory/My Outfits"
       COMMAND="\"command\": \"inventory\", \"path\": \"${path}\", \"follow\": \"True\", \"action\": \"ls\""
       ;;
+    give|give_inv*)
+      COMMAND="\"command\": \"give\", \"entity\": \"avatar\", \"agent\": \"${AVATAR_UUID}\", \"item\": \"${UUID}\""
+      ;;
+    give_obj*)
+      COMMAND="\"command\": \"give\", \"entity\": \"object\", \"target\": \"${AVATAR_UUID}\", \"item\": \"${UUID}\""
+      ;;
     im)
       COMMAND="\"command\": \"tell\", \"entity\": \"avatar\", \"agent\": \"${SL_NAME}\", \"message\": \"${MESSAGE}\""
       ;;
@@ -689,7 +696,7 @@ send_lifebot_request() {
   }
   COMMON="\"action\": \"${act}\", \
           \"apikey\": \"${LB_API_KEY}\", \
-          \"botname\": \"${LB_BOT_NAME}\", \
+          \"botname\": \"${BE_BOT_NAME}\", \
           \"secret\": \"${LB_SECRET}\", \
           \"dataType\": \"json\""
   case "${act}" in
@@ -1213,11 +1220,16 @@ shift $(( OPTIND - 1 ))
   }
 }
 
+if [ "${SCRIPT_NAME}" == "corrade" ]; then
+  BE_BOT_NAME="${CO_BOT_NAME}"
+else
+  BE_BOT_NAME="${LB_BOT_NAME}"
+fi
 # Check for Name alias in ~/.botctrl
 [ "${BOT_NAME}" ] && {
   botname=$(echo "${BOT_NAME}" | sed -e "s/ /_/g")
   envname="BOT_NAME_${botname}"
-  [ "${!envname}" ] && LB_BOT_NAME="${!envname}"
+  [ "${!envname}" ] && BE_BOT_NAME="${!envname}"
 }
 
 # Setup Corrade variables if Corrade bot was specified with -c bot
@@ -1234,7 +1246,7 @@ shift $(( OPTIND - 1 ))
 
 # Check for a bot specific secret
 [ "${command_line_secret}" ] || {
-  botname=$(echo "${LB_BOT_NAME}" | sed -e "s/ /_/g")
+  botname=$(echo "${BE_BOT_NAME}" | sed -e "s/ /_/g")
   envsecret="LB_SECRET_${botname}"
   [ "${!envsecret}" ] && LB_SECRET="${!envsecret}"
 }
@@ -1292,7 +1304,7 @@ shift $(( OPTIND - 1 ))
 if [ "${UUID}" ]; then
   LOGIN_SITON="${UUID}"
 else
-  botuuid=$(echo "${LB_BOT_NAME}" | sed -e "s/ /_/g")
+  botuuid=$(echo "${BE_BOT_NAME}" | sed -e "s/ /_/g")
   envuuid="LOGIN_SITON_${botuuid}"
   [ "${!envuuid}" ] && LOGIN_SITON="${!envuuid}"
 fi
@@ -1370,7 +1382,7 @@ case "${ACTION}" in
       send_request "get_balance"
     fi
     ;;
-  give_inv*|give_obj*)
+  give|give_inv*|give_obj*)
     show_usage=
     [ "${AVATAR_UUID}" ] || {
       echo "The ${ACTION} action requires an Avatar UUID specified with -A avatar-uuid"

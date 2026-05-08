@@ -40,12 +40,12 @@ Examples:
   botctrl -a teleport -l club  # Uses a 'club' location alias defined in .botctrl
 Supported Actions
 Supported actions common to both Corrade and LifeBots:
-  activate_group, attachments, get_balance, get_outfit, get_outfits, give_money,
-  give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,
+  activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,
+  give_money, give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,
   rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight, sit, stand,
   takeoff, teleport, touch_prim, walkto, wear, wear_outfit
 Supported actions for LifeBots only:
-  avatar_picks, bot_location, give_inventory, reply_dialog, status, touch_attachment
+  avatar_picks, bot_location, reply_dialog, status, touch_attachment
 Supported actions for Corrade only:
   attach, conference, conference_detail, conference_list, createlandmark, detach,
   fly, flyto, getattachmentspath, get_hoverheight, getmembersonline, inventory cwd
