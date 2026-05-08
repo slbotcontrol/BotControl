@@ -1,6 +1,6 @@
 # Botctrl
 
-This release of the `botctrl` command line management system expands support for controlling `Corrade` bots from the command line, adding support for many additional Corrade API commands.
+This release of the `botctrl` command line management system expands support for controlling `Corrade` bots from the command line, adding support for many additional Corrade API commands. In addition, the `install` script installs `jq` if not already present and installs example scripts in `/usr/local/BotControl/examples/`.
 
 The release includes the release artifact `install` which can be used to install the `botctrl` management system. See the [Install botctrl](#install-botctrl) section below for installation instructions. See the [repository README](https://github.com/missyrestless/BotControl#readme) for additional info and example `botctrl` command invocations.
 
@@ -148,15 +148,15 @@ Supported Actions
 Supported actions for BotControl Configuration:
   bot_alias, loc_alias, slurl_alias, uuid_alias, list_alias, alias
 Supported actions common to both Corrade and LifeBots:
-  activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,
-  give_money, give_money_object, im, key2name, listinventory, login, logout, name2key,
-  notecard_create, rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,
-  sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit
+  activate_group, attachments, avatar_picks, get_balance, get_outfit, get_outfits, give_inventory,
+  give_object, give_money, give_money_object, im, key2name, listinventory, login, logout,
+  name2key, notecard_create, rebake, say_chat_channel, send_group_im, send_notice,
+  set_hoverheight, sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit
 Supported actions for LifeBots only:
-  avatar_picks, bot_location, reply_dialog, touch_attachment
+  bot_location, reply_dialog, touch_attachment
 Supported actions for Corrade only:
-  attach, conference, conference_detail, conference_list, createlandmark, currentsim,
-  detach, fly, flyto, getattachmentspath, getgroupmemberdata, get_hoverheight,
+  attach, conference, conference_detail, conference_list, createlandmark, currentsim, detach
+  fly, flyto, getattachmentspath, getavatarpickdata, getgroupmemberdata, get_hoverheight,
   getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata
 ```
 

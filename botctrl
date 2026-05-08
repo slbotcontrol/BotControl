@@ -349,15 +349,15 @@ list_supported_actions() {
   printf "\nSupported actions for BotControl Configuration:"
   printf "\n  bot_alias, loc_alias, slurl_alias, uuid_alias, list_alias, alias"
   printf "\nSupported actions common to both Corrade and LifeBots:"
-  printf "\n  activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,"
-  printf "\n  give_money, give_money_object, im, key2name, listinventory, login, logout, name2key,"
-  printf "\n  notecard_create, rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,"
-  printf "\n  sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit"
+  printf "\n  activate_group, attachments, avatar_picks, get_balance, get_outfit, get_outfits, give_inventory,"
+  printf "\n  give_object, give_money, give_money_object, im, key2name, listinventory, login, logout,"
+  printf "\n  name2key, notecard_create, rebake, say_chat_channel, send_group_im, send_notice,"
+  printf "\n  set_hoverheight, sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit"
   printf "\nSupported actions for LifeBots only:"
-  printf "\n  avatar_picks, bot_location, reply_dialog, touch_attachment"
+  printf "\n  bot_location, reply_dialog, touch_attachment"
   printf "\nSupported actions for Corrade only:"
-  printf "\n  attach, conference, conference_detail, conference_list, createlandmark, currentsim,"
-  printf "\n  detach, fly, flyto, getattachmentspath, getgroupmemberdata, get_hoverheight,"
+  printf "\n  attach, conference, conference_detail, conference_list, createlandmark, currentsim, detach"
+  printf "\n  fly, flyto, getattachmentspath, getavatarpickdata, getgroupmemberdata, get_hoverheight,"
   printf "\n  getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata\n"
 }
 
@@ -462,6 +462,15 @@ send_corrade_request() {
       else
         COMMAND="\"command\": \"detach\", \"type\": \"UUID\", \"attachments\": \"${UUID}\""
       fi
+      ;;
+    avatar_picks|picks)
+      COMMAND="\"command\": \"getavatarpicks\", \"agent\": \"${AVATAR_UUID}\""
+      ;;
+    *pick*data)
+      COMMAND="\"command\": \"getavatarpickdata\", \
+                \"agent\": \"${AVATAR_UUID}\", \
+                \"data\": \"Desc\", \
+                \"item\": \"${UUID}\""
       ;;
     conference|creat*confer*|confer*creat*)
       [ "${TEXT}" ] || {
@@ -1746,9 +1755,12 @@ case "${ACTION}" in
   avatar_picks|picks)
     if [ "${have_jq}" ]; then
       UUID="${AVATAR_UUID}"
-      AVATAR_NAME=$(send_request "key2name" | jq -r '.name')
-      printf "\nAvatar ${AVATAR_NAME} picks:\n\n"
-      send_request "avatar_picks" | jq -r '.picks'
+      if [ "${corrade}" ]; then
+        AVATAR_NAME=$(send_request "key2name" | jq -r '.data[1]')
+      else
+        AVATAR_NAME=$(send_request "key2name" | jq -r '.name')
+      fi
+      send_request "avatar_picks"
     else
       send_request "avatar_picks"
     fi

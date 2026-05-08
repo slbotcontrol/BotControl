@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# install - install BotControl and, if not already present, jq
+
+DESTDIR="/usr/local/BotControl"
 
 if [[ $EUID -eq 0 ]]
 then
@@ -15,6 +19,49 @@ have_real=$(type -p realpath)
 [ "${have_real}" ] && SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
 
 have_git=$(type -p git)
+
+install_package() {
+  pkg="$1"
+  printf "\nInstalling ${pkg}\n"
+  darwin=
+  mach=$(uname -m)
+  platform=$(uname -s)
+  [ "${platform}" == "Darwin" ] && darwin=1
+  if [ "${darwin}" ]; then
+    have_brew=$(type -p brew)
+    [ "${have_brew}" ] && brew install ${pkg} > /dev/null 2>&1
+  else
+    have_apt=$(type -p apt)
+    if [ "${have_apt}" ]; then
+      ${SUDO} apt install ${pkg} > /dev/null 2>&1
+    else
+      have_pac=$(type -p pacman)
+      if [ "${have_pac}" ]; then
+        ${SUDO} pacman -S ${pkg} > /dev/null 2>&1
+      else
+        have_apk=$(type -p apk)
+        if [ "${have_apk}" ]; then
+          ${SUDO} apk add ${pkg} > /dev/null 2>&1
+        else
+          have_dnf=$(type -p dnf)
+          if [ "${have_dnf}" ]; then
+            ${SUDO} dnf install ${pkg} > /dev/null 2>&1
+          else
+            have_xbps=$(type -p xbps-install)
+            if [ "${have_xbps}" ]; then
+              ${SUDO} xbps-install -S ${pkg} > /dev/null 2>&1
+            else
+              have_zypp=$(type -p zypper)
+              [ "${have_zypp}" ] && {
+                ${SUDO} zypper install ${pkg} > /dev/null 2>&1
+              }
+            fi
+          fi
+        fi
+      fi
+    fi
+  fi
+}
 
 cd "${SCRIPT_PATH}"
 [ -f botctrl ] || {
@@ -69,41 +116,59 @@ done
 
 user=$(id -u)
 group=$(id -g)
-[ -d /usr/local/BotControl/log ] || ${SUDO} mkdir -p /usr/local/BotControl/log
-${SUDO} touch /usr/local/BotControl/log/cron.log
-${SUDO} chown -R ${user}:${group} /usr/local/BotControl/log
+[ -d ${DESTDIR}/log ] || ${SUDO} mkdir -p ${DESTDIR}/log
+${SUDO} touch ${DESTDIR}/log/cron.log
+${SUDO} chown -R ${user}:${group} ${DESTDIR}/log
 
 for lbb in bin/*
 do
   [ -d "${lbb}" ] && continue
   [ "${lbb}" == "bin/*" ] && continue
   bas=$(basename "${lbb}")
-  ${SUDO} cp "${lbb}" /usr/local/BotControl
-  ${SUDO} chmod 755 /usr/local/BotControl/${bas}
+  ${SUDO} cp "${lbb}" ${DESTDIR}
+  ${SUDO} chmod 755 ${DESTDIR}/${bas}
 done
-for scr in /usr/local/BotControl/*
+for scr in ${DESTDIR}/*
 do
   [ -d "${scr}" ] && continue
-  [ "${scr}" == "/usr/local/BotControl/*" ] && continue
+  [ "${scr}" == "${DESTDIR}/*" ] && continue
   bas=$(basename "${scr}")
   ${SUDO} rm -f /usr/local/bin/${bas}
   ${SUDO} ln -s ${scr} /usr/local/bin/${bas}
 done
 
-[ -d /usr/local/BotControl/lib ] || ${SUDO} mkdir -p /usr/local/BotControl/lib
+[ -d ${DESTDIR}/lib ] || ${SUDO} mkdir -p ${DESTDIR}/lib
 for fun in bin/lib/*
 do
   [ "${fun}" == "bin/lib/*" ] && continue
   bas=$(basename "${fun}")
   if [ -d "${fun}" ]; then
-    ${SUDO} cp -a "${fun}" /usr/local/BotControl/lib
-    ${SUDO} chmod 755 /usr/local/BotControl/lib/${bas}
-    ${SUDO} chmod 644 /usr/local/BotControl/lib/${bas}/*
+    ${SUDO} cp -a "${fun}" ${DESTDIR}/lib
+    ${SUDO} chmod 755 ${DESTDIR}/lib/${bas}
+    ${SUDO} chmod 644 ${DESTDIR}/lib/${bas}/*
   else
-    ${SUDO} cp "${fun}" /usr/local/BotControl/lib
-    ${SUDO} chmod 644 /usr/local/BotControl/lib/${bas}
+    ${SUDO} cp "${fun}" ${DESTDIR}/lib
+    ${SUDO} chmod 644 ${DESTDIR}/lib/${bas}
   fi
 done
+
+[ -d ${DESTDIR}/examples ] || ${SUDO} mkdir -p ${DESTDIR}/examples
+for exm in examples/*
+do
+  [ "${exm}" == "examples/*" ] && continue
+  bas=$(basename "${exm}")
+  if [ -d "${exm}" ]; then
+    ${SUDO} cp -a "${exm}" ${DESTDIR}/examples
+    ${SUDO} chmod 755 ${DESTDIR}/examples/${bas}
+    ${SUDO} chmod 755 ${DESTDIR}/examples/${bas}/*
+  else
+    ${SUDO} cp "${exm}" ${DESTDIR}/examples
+    ${SUDO} chmod 755 ${DESTDIR}/examples/${bas}
+  fi
+done
+
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || install_package jq
 
 printf "\n\nInstallation of the botctrl command and associated scripts is complete.\n"
 printf "\nAdd /usr/local/bin to your execution PATH if it is not already included.\n"
@@ -113,5 +178,6 @@ printf "\n\tfor a template to use for this file.\n"
 printf "\nView the botctrl manual with the command 'man botctrl'.\n"
 printf "\nView the botctrl usage message with the command 'botctrl -h'.\n"
 printf "\nView botctrl example invocations with the command 'botctrl -e'.\n"
+printf "\nSee botctrl example scripts in ${DESTDIR}/examples/.\n"
 printf "\nSee ${SCRIPT_PATH}/BotControl/crontab.in"
 printf "\nfor example crontab entries to schedule bot activities.\n\n"

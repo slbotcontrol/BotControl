@@ -271,15 +271,15 @@ The following command line options are available with `botctrl`:
 - Supported actions for BotControl Configuration:
   - bot_alias, loc_alias, slurl_alias, uuid_alias, list_alias, alias
 - Supported actions common to both Corrade and LifeBots:
-  - activate_group, attachments, get_balance, get_outfit, get_outfits, give_inventory, give_object,
-  - give_money, give_money_object, im, key2name, listinventory, login, logout, name2key,
-  - notecard_create, rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight,
-  - sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit
+  - activate_group, attachments, avatar_picks, get_balance, get_outfit, get_outfits, give_inventory,
+  - give_object, give_money, give_money_object, im, key2name, listinventory, login, logout,
+  - name2key, notecard_create, rebake, say_chat_channel, send_group_im, send_notice,
+  - set_hoverheight, sit, stand, status, takeoff, teleport, touch_prim, walkto, wear, wear_outfit
 - Supported actions for LifeBots only:
-  - avatar_picks, bot_location, reply_dialog, touch_attachment
+  - bot_location, reply_dialog, touch_attachment
 - Supported actions for Corrade only:
-  - attach, conference, conference_detail, conference_list, createlandmark, currentsim,
-  - detach, fly, flyto, getattachmentspath, getgroupmemberdata, get_hoverheight,
+  - attach, conference, conference_detail, conference_list, createlandmark, currentsim, detach
+  - fly, flyto, getattachmentspath, getavatarpickdata, getgroupmemberdata, get_hoverheight,
   - getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata
 
 ### ENVIRONMENT
