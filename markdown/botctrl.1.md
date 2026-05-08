@@ -248,10 +248,10 @@ The following command line options are available with `botctrl`:
   - rebake, touch_attachment, touch_prim, activate_group, wear, takeoff, say_chat_channel, set_hoverheight,
   - get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object
 - Supported Corrade actions:
-  - attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,
-  - createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline,
-  - inventory cwd, inventory list current outfit, inventory list outfits, pay avatar,
-  - pay object, sit, stand, teleport, touch, unwear, walkto, wear
+  - activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,
+  - createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im,
+  - inventory cwd, inventory list current outfit, inventory list outfits, pay avatar, pay object
+  - say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear
 
 ### ENVIRONMENT
 

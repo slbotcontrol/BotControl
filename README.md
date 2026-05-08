@@ -492,10 +492,10 @@ Supported LifeBots actions:
   rebake, touch_attachment, touch_prim, activate_group, wear, takeoff, say_chat_channel, set_hoverheight,
   get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object
 Supported Corrade actions:
-  attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,
-  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline,
-  inventory cwd, inventory list current outfit, inventory list outfits, pay avatar,
-  pay object, sit, stand, teleport, touch, unwear, walkto, wear
+  activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,
+  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im,
+  inventory cwd, inventory list current outfit, inventory list outfits, pay avatar, pay object
+  say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear
 ```
 
 </details>
@@ -844,10 +844,10 @@ list_supported_actions() {
   printf "\n  rebake, touch_attachment, touch_prim, activate_group, wear, takeoff, say_chat_channel, set_hoverheight,"
   printf "\n  get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object"
   printf "\nSupported Corrade actions:"
-  printf "\n  attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,"
-  printf "\n  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline,"
-  printf "\n  inventory cwd, inventory list current outfit, inventory list outfits, pay avatar,"
-  printf "\n  pay object, sit, stand, teleport, touch, unwear, walkto, wear\n"
+  printf "\n  activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,"
+  printf "\n  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im,"
+  printf "\n  inventory cwd, inventory list current outfit, inventory list outfits, pay avatar, pay object"
+  printf "\n  say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear\n"
 }
 
 get_coords() {
@@ -935,6 +935,9 @@ send_corrade_request() {
   }
   COMMON="\"group\": \"${cgroup}\", \"password\": \"${cpassw}\""
   case "${cmd}" in
+    activate|activate_group)
+      COMMAND="\"command\": \"activate\", \"target\": \"${GROUP_ID}\""
+      ;;
     attach|detach)
       [ "${UUID}" ] || {
         echo "The ${cmd} action requires an inventory item UUID specified with -u UUID"
@@ -982,6 +985,9 @@ send_corrade_request() {
       echo "${cmd}" | grep get_outfits >/dev/null && path="/My Inventory/My Outfits"
       COMMAND="\"command\": \"inventory\", \"path\": \"${path}\", \"follow\": \"True\", \"action\": \"ls\""
       ;;
+    im)
+      COMMAND="\"command\": \"tell\", \"entity\": \"avatar\", \"agent\": \"${SL_NAME}\", \"message\": \"${MESSAGE}\""
+      ;;
     key2name)
       COMMAND="\"command\": \"batchavatarkeytoname\", \"avatars\": \"${UUID}\""
       ;;
@@ -997,21 +1003,42 @@ send_corrade_request() {
     pay_object|give_money_object)
       COMMAND="\"command\": \"pay\", \"entity\": \"object\", \"target\": \"${OBJECT_UUID}\", \"amount\": \"${AMOUNT}\""
       ;;
+    send_group_im)
+      COMMAND="\"command\": \"tell\", \
+               \"entity\": \"group\", \
+               \"target\": \"${GROUP_ID}\", \
+               \"message\": \"${MESSAGE}\""
+      ;;
+    send_notice)
+      COMMAND="\"command\": \"notice\", \
+               \"action\": \"send\", \
+               \"target\": \"${GROUP_ID}\", \
+               \"subject\": \"${SUBJECT}\", \
+               \"message\": \"${MESSAGE}\""
+      ;;
+    say_chat_channel)
+      COMMAND="\"command\": \"tell\", \
+               \"entity\": \"local\", \
+               \"type\": \"normal\", \
+               \"channel\": \"${CHANNEL}\", \
+               \"message\": \"${MESSAGE}\""
+      ;;
     sit|touch*)
       if [ "${UUID}" ]; then
-        # cuuid=$(wasURLEscape "${UUID}")
         cuuid="${UUID}"
       else
         if [ "${OBJ_NAME}" ]; then
-          # cuuid=$(wasURLEscape "${OBJ_NAME}")
           cuuid="${OBJ_NAME}"
         else
           echo "Corrade command ${cmd} requires object uuid or name"
           usage brief
         fi
       fi
-      [ "${cmd}" == "sit" ] || cmd="touch"
-      COMMAND="\"command\": \"${cmd}\", \"item\": \"${cuuid}\", \"range\": \"${CORRADE_RANGE}\""
+      if [ "${cmd}" == "sit" ]; then
+        COMMAND="\"command\": \"sit\", \"item\": \"${cuuid}\", \"range\": \"${CORRADE_RANGE}\", \"deanimate\": \"True\""
+      else
+        COMMAND="\"command\": \"touch\", \"item\": \"${cuuid}\", \"range\": \"${CORRADE_RANGE}\""
+      fi
       ;;
     stand)
       COMMAND="\"command\": \"stand\", \"deanimate\": \"True\""
