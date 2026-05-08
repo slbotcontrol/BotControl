@@ -1,6 +1,6 @@
 # Botctrl
 
-This major new release of the `botctrl` command line management system adds support for controlling `Corrade` bots from the command line.
+This release of the `botctrl` command line management system expands support for controlling `Corrade` bots from the command line, adding support for many additional Corrade API commands.
 
 The release includes the release artifact `install` which can be used to install the `botctrl` management system. See the [Install botctrl](#install-botctrl) section below for installation instructions. See the [repository README](https://github.com/missyrestless/BotControl#readme) for additional info and example `botctrl` command invocations.
 
