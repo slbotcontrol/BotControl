@@ -31,10 +31,11 @@ have_jq=$(type -p jq)
 }
 
 usage() {
-  printf "\nUsage: keys2displaynames [-n name] [-f /path/to/file]"
+  printf "\nUsage: keys2displaynames [-n name] [-f /path/to/file] [-h]"
   printf "\nWhere:"
   printf "\n\t-n name specifies the BOT name [default: ${DEF_BOT}]"
-  printf "\n\t-f file specifies the path to a file with UUIDs [default: ${DEF_FILE}]\n\n"
+  printf "\n\t-f file specifies the path to a file with UUIDs [default: ${DEF_FILE}]"
+  printf "\n\t-h displays this usage message and exits\n\n"
   exit 1
 }
 
