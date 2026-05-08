@@ -17,9 +17,9 @@ SHELL=/bin/bash
 # Monday at 6pm sit Anya in theater seating after her set
 0 18 * * 1 /bin/bash -lc /usr/local/BotControl/anya2seat >> /usr/local/BotControl/log/cron.log 2>&1
 # Tuesday at 6pm send Angelus bot to DJ at the club
-0 18 * * 2 /bin/bash -lc /usr/local/BotControl/angelus2clubdj >> /usr/local/BotControl/log/cron.log 2>&1
+0 18 * * 2 /bin/bash -lc /usr/local/BotControl/angel2clubdj >> /usr/local/BotControl/log/cron.log 2>&1
 # Tuesday at 8pm send Angelus bot back to his dance pole
-0 20 * * 2 /bin/bash -lc /usr/local/BotControl/angelus2pole >> /usr/local/BotControl/log/cron.log 2>&1
+0 20 * * 2 /bin/bash -lc /usr/local/BotControl/angel2pole >> /usr/local/BotControl/log/cron.log 2>&1
 # Friday at 6pm send Easy bot to DJ at the club
 0 18 * * 5 /bin/bash -lc /usr/local/BotControl/easy2clubdj >> /usr/local/BotControl/log/cron.log 2>&1
 # Friday at 8pm send Easy bot back to her dance pole
@@ -27,7 +27,7 @@ SHELL=/bin/bash
 # Saturday at 6pm send all bots to dance at the club
 0 18 * * 6 /bin/bash -lc /usr/local/BotControl/bots2clubdance >> /usr/local/BotControl/log/cron.log 2>&1
 # Saturday at 9pm send all bots back to their default locations
-0 21 * * 6 /bin/bash -lc /usr/local/BotControl/bots2home >> /usr/local/BotControl/log/cron.log 2>&1
+0 21 * * 6 /bin/bash -lc /usr/local/BotControl/bots2club >> /usr/local/BotControl/log/cron.log 2>&1
 # Check every hour if Easy bot is at the club greeting visitors
 # 0 * * * * /bin/bash -lc /usr/local/BotControl/checkbot >> /usr/local/BotControl/log/cron.log 2>&1
 # Send the Easy Islay bot's L$ balance to myself on the 1st of every month

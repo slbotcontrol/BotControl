@@ -89,7 +89,7 @@ Add an entry of the form `export LB_SECRET_Firstname_Lastname='<bot-secret>'` to
 
 See `example_dot_botctrl` for a template to use for this file.
 
-See `crontab.in` for example crontab entries to schedule bot activities.
+See `cron/crontab.in` for example crontab entries to schedule bot activities.
 
 ## Usage
 

@@ -243,7 +243,7 @@ to `$HOME/.botctrl` for each of your `Corrade` bots.
 
 See `BotControl/example_dot_botctrl` for a template to use for `$HOME/.botctrl`.
 
-See `BotControl/crontab.in` for example crontab entries to schedule bot activities.
+See `BotControl/cron/crontab.in` for example crontab entries to schedule bot activities.
 
 See the section [Scheduling Bot Actions](#scheduling-bot-actions) below for more
 details on scheduling bot actions.

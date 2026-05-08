@@ -24,6 +24,7 @@ have_lb=$(type -p botctrl)
 #}
 
 botctrl -a stand -n Anya >/dev/null 2>&1
+sleep 2
 botctrl -a teleport -n Anya -l club
 sleep 10
-botctrl -a sit -n Anya -u lcouch
+botctrl -a sit -n Anya -u dchair

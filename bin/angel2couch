@@ -18,12 +18,12 @@ have_lb=$(type -p botctrl)
 #}
 
 # Check if Bot is online and if not, login
-#botctrl -a status -n Anya | jq -r '.status' | grep -i online >/dev/null || {
-#  botctrl -a login -n Anya -l club
+#botctrl -a status -c Angel | jq -r '.status' | grep -i online >/dev/null || {
+#  botctrl -a login -c Angel -l club
 #  sleep 20
 #}
 
-botctrl -a stand -n Anya >/dev/null 2>&1
-botctrl -a teleport -n Anya -l club
+botctrl -a stand -c Angel >/dev/null 2>&1
+botctrl -a teleport -c Angel -l club
 sleep 10
-botctrl -a sit -n Anya -u lcouch
+botctrl -a sit -c Angel -u rcouch

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+CF="crontab_my.in"
+
+SCRIPT_PATH="$(
+  cd "$(dirname "$0")"
+  pwd -P
+)"
+have_real=$(type -p realpath)
+[ "${have_real}" ] && SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
+
+cd "${SCRIPT_PATH}"
+
+[ "$1" ] && CF="$1"
+[ -f "${CF}" ] || {
+  echo "ERROR: cannot locate crontab input file ${CF}"
+  exit 1
+}
+
+grep ^\[0-9\] ${CF} | awk '{ print $8 }' | while read task
+do
+  if [ -x "${task}" ]; then
+    printf "\nOK:       \t%s" "${task}"
+  else
+    printf "\nNOT FOUND:\t%s" "${task}"
+  fi
+done
+printf "\n\n"

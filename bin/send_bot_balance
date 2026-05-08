@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 #
-# send_bot_balance - get the bot's balance and send it to myself
+# send_bot_balance - get the bot's balance and send it to myself or IM the balances
 #
-# Usage: send_bot_balance [-A] [-n bot_name] [-N recipient_name] [-u uuid]
+# Usage: send_bot_balance [-A] [-a amount] [-i] [-l] [-n bot_name] [-N recipient_name] [-u uuid]
 
+## CUSTOMIZE THESE  <<<<<<<
+#
 # Set this to your Second Life avatar name
 DEF_SL_NAME="Missy Restless"
 # Set this to your bot's name
@@ -11,6 +13,10 @@ DEF_BOT_NAME="Easy"
 # Set this to all your bots names or their aliases, for use with -A
 ALL_LB_BOTS="Anya"
 ALL_CO_BOTS="Angel Easy"
+## END CUSTOMIZATION
+
+## DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING
+#
 ALL_BOTS="${ALL_LB_BOTS} ${ALL_CO_BOTS}"
 CORRADE=
 
@@ -32,12 +38,27 @@ have_jq=$(type -p jq)
 }
 
 usage() {
-  printf "\nUsage: send_bot_balance [-A] [-d] [-n bot_name] [-N recipient_name]\n\n"
+  printf "\nUsage: send_bot_balance [-A] [-a amount] [-d] [-h] [-i] [-l] [-n bot_name] [-N recipient_name]"
   printf "\nWhere:"
   printf "\n\t-A indicates all bots [All Bots: ${ALL_BOTS}]"
+  printf "\n\t-a amount specifies the amount to send [default: entire balance]"
   printf "\n\t-d indicates debug mode, no payment [default: false]"
+  printf "\n\t-i indicates IM the balances rather than sending the balances, no payment"
+  printf "\n\t-l indicates list the balances rather than sending the balances, no payment"
   printf "\n\t-n name specifies the BOT name [default: ${DEF_BOT_NAME}]"
-  printf "\n\t-N recipient_name specifies the payment recipient [default: ${DEF_SL_NAME}]\n\n"
+  printf "\n\t-N recipient_name specifies the payment recipient [default: ${DEF_SL_NAME}]"
+  printf "\n\t-h displays this usage message and exits"
+  printf "\nExamples:"
+  printf "\n\tIM all bot balances to avatar Sindy Payne (no payment)"
+  printf "\n\t\tsend_bot_balance -A -i -N \"Sindy Payne\""
+  printf "\n\tList all bot balances (no payment)"
+  printf "\n\t\tsend_bot_balance -A -l"
+  printf "\n\tSend all bot balances to avatar Janet Dobro"
+  printf "\n\t\tsend_bot_balance -A -N \"Janet Dobro\""
+  printf "\n\tSend bot named Bunny Floofoo balance to the default recipient avatar (${DEF_SL_NAME})"
+  printf "\n\t\tsend_bot_balance -n \"Bunny Floofoo\""
+  printf "\n\tSend L\$250 from bot named Ana Koi to avatar Rawr Talent"
+  printf "\n\t\tsend_bot_balance -a 250 -n \"Ana Koi\" -N \"Rawr Talent\"\n\n"
   exit 1
 }
 
@@ -86,25 +107,66 @@ send_balance() {
 
   # Send balance if it is greater than 0
   [ "${debug}" ] && echo "Balance = ${BALANCE}"
-  [ ${BALANCE} -gt 0 ] && {
+  if [ "${message}" ]; then
     [ "${debug}" ] && {
-      echo "Sending bot balance to ${SL_NAME} with:"
-      echo "botctrl -a give_money ${bot_arg} \"${BOT_NAME}\" -A \"${SL_UUID}\" -z ${BALANCE} ${debug}"
+      echo "Messaging bot balance to ${SL_NAME} with:"
+      echo "botctrl -a im ${bot_arg} \"${BOT_NAME}\" -N \"${SL_UUID}\" -M \"My current balance is L\$${BALANCE}\" ${debug}"
     }
-    botctrl -a give_money ${bot_arg} "${BOT_NAME}" -A "${SL_UUID}" -z ${BALANCE} ${debug}
-  }
+    botctrl -a im ${bot_arg} "${BOT_NAME}" -N "${SL_UUID}" -M "My current balance is L\$${BALANCE}" ${debug}
+  else
+    if [ "${list}" ]; then
+      printf "\n%s balance:\tL\$%s\n" "${BOT_NAME}" "${BALANCE}"
+    else
+      if [ ${BALANCE} -gt 0 ]; then
+        if [ "${amount}" ]; then
+          if [ ${amount} -le ${BALANCE} ]; then
+            BALANCE="${amount}"
+          else
+            echo "ERROR: insufficient balance to send L\$${amount}"
+            exit 1
+          fi
+          [ "${debug}" ] && {
+            echo "Sending L\$${BALANCE} from bot to ${SL_NAME} with:"
+            echo "botctrl -a give_money ${bot_arg} \"${BOT_NAME}\" -A \"${SL_UUID}\" -z ${BALANCE} ${debug}"
+          }
+        else
+          [ "${debug}" ] && {
+            echo "Sending bot balance to ${SL_NAME} with:"
+            echo "botctrl -a give_money ${bot_arg} \"${BOT_NAME}\" -A \"${SL_UUID}\" -z ${BALANCE} ${debug}"
+          }
+        fi
+        botctrl -a give_money ${bot_arg} "${BOT_NAME}" -A "${SL_UUID}" -z ${BALANCE} ${debug}
+      else
+        echo "${BOT_NAME} zero balance"
+      fi
+    fi
+  fi
 }
+
+[ $# -eq 0 ] && usage
 
 BOT_NAME= SL_NAME=
 allbots=
+amount=
 debug=
-while getopts ":Adn:N:h" flag; do
+list=
+message=
+while getopts ":Aa:diln:N:h" flag; do
   case $flag in
     A)
       allbots=1
       ;;
+    a)
+      amount="$OPTARG"
+      ;;
     d)
       debug="-d"
+      ;;
+    i)
+      message=1
+      ;;
+    l)
+      list=1
       ;;
     n)
       BOT_NAME="$OPTARG"

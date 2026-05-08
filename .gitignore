@@ -8,6 +8,9 @@ tmp/
 # Private scripts, do not add or commit
 Private/
 
+# My customized crontab entries
+crontab_my.in
+
 Thumbs.db
 ehthumbs.db
 Desktop.ini
