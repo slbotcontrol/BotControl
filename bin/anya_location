@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# To retrieve the position of a configured LifeBots bot use the lifebot command
+# with the bot_location action. In this example we specify the bot name as Anya,
+# an alias configured in ~/.botctrl with BOT_NAME_Anya="Anya Ordinary"
+#
+# To retrieve the position of a configured Corrade bot use the corrade command
+# with the currentsim and selfdata actions. In this example we specify the bot
+# name as Easy, an alias configured in ~/.botctrl with BOT_NAME_Easy="Easy Islay"
+#
+# Note, we can use the -n Name command line arguments to specify the bot name because
+# we are using the corrade command. The same command could be run using the botctrl
+# command but it would be "botctrl -c Easy ...", using the -c Name instead.
+#
+# Replace 'Anya' with your LifeBots bot names or an alias for the name you have configured
+LB_BOT_NAMES="Anya"
+
+debug=
+[ "$1" == "-v" ] && debug=1
+
+for BOT_NAME in ${LB_BOT_NAMES}
+do
+  [ "${BOT_NAME}" ] || continue
+  printf "\nLocation of LifeBots bot ${BOT_NAME}"
+  printf "\n----------------------------------\n"
+  if [ "${debug}" ]; then
+    lifebot -a bot_location -n "${BOT_NAME}" -v
+  else
+    have_jq=$(type -p jq)
+    if [ "${have_jq}" ]; then
+      location=$(lifebot -a bot_location -n "${BOT_NAME}" | jq -r '"\(.region), \(.x), \(.y), \(.z)"')
+      region=$(echo "${location}" | awk -F ',' '{ print $1 }')
+      coords=$(echo "${location}" | awk -F ',' -v OFS=',' '{ print $2, $3, $4 }')
+      coords=$(echo "${coords}" | sed -e 's/^[[:space:]]*//')
+      echo "Region: ${region}"
+      echo "Coordinates: <${coords}>"
+    else
+      lifebot -a bot_location -n "${BOT_NAME}"
+    fi
+  fi
+done
