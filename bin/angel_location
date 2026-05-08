@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# To retrieve the position of a configured LifeBots bot use the lifebot command
+# with the bot_location action. In this example we specify the bot name as Anya,
+# an alias configured in ~/.botctrl with BOT_NAME_Anya="Anya Ordinary"
+#
+# To retrieve the position of a configured Corrade bot use the corrade command
+# with the currentsim and selfdata actions. In this example we specify the bot
+# name as Easy, an alias configured in ~/.botctrl with BOT_NAME_Easy="Easy Islay"
+#
+# Note, we can use the -n Name command line arguments to specify the bot name because
+# we are using the corrade command. The same command could be run using the botctrl
+# command but it would be "botctrl -c Easy ...", using the -c Name instead.
+#
+# In this example we use the jq JSON parser, if it is available, to filter the returned
+# JSON and capture the returned data values in variables.
+#
+# Replace 'Angel Easy' with your Corrade bot names or an alias for the name you have configured
+CO_BOT_NAMES="Angel"
+
+debug=
+[ "$1" == "-v" ] && debug=1
+
+for BOT_NAME in ${CO_BOT_NAMES}
+do
+  [ "${BOT_NAME}" ] || continue
+  printf "\nLocation of Corrade bot ${BOT_NAME}"
+  printf "\n---------------------------------\n"
+  if [ "${debug}" ]; then
+    echo "Region:"
+    corrade -a currentsim -n "${BOT_NAME}" -v
+    echo "Coordinates:"
+    corrade -a selfdata -n "${BOT_NAME}" -D SimPosition -v
+  else
+    have_jq=$(type -p jq)
+    if [ "${have_jq}" ]; then
+      region=$(corrade -a currentsim -n "${BOT_NAME}" | jq -r '.data[1]' | awk '{sub(/\(.*/, ""); print}')
+      coords=$(corrade -a selfdata -n "${BOT_NAME}" -D SimPosition | jq -r '.data[1]')
+      echo "Region: ${region}"
+      echo "Coordinates: ${coords}"
+    else
+      echo "Region:"
+      corrade -a currentsim -n "${BOT_NAME}"
+      echo "Coordinates:"
+      corrade -a selfdata -n "${BOT_NAME}" -D SimPosition
+    fi
+  fi
+done
