@@ -75,7 +75,7 @@ cd "${SCRIPT_PATH}"
     fi
   else
     if [ "${have_git}" ]; then
-      git clone https://github.com/TruthInBeauty/BotControl.git
+      git clone https://github.com/slbotcontrol/BotControl.git
       exec BotControl/install
       exit 0
     else

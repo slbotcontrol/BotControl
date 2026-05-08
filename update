@@ -2,7 +2,7 @@
 #
 # update - run this script to update BotControl to the latest committed version
 #
-REPO="TruthInBeauty/BotControl"
+REPO="slbotcontrol/BotControl"
 
 SCRIPT_PATH="$(
   cd "$(dirname "$0")"

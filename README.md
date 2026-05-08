@@ -3,7 +3,7 @@
 Install `BotControl`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/TruthInBeauty/BotControl/refs/heads/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/slbotcontrol/BotControl/refs/heads/main/install | bash
 ```
 
 `BotControl` is a command line management system for `LifeBots` and `Corrade` Second Life
@@ -144,7 +144,7 @@ function properly but the bulk of the system will function without `jq`.
 To install `botctrl`:
 
 ```bash
-git clone https://github.com/TruthInBeauty/BotControl.git
+git clone https://github.com/slbotcontrol/BotControl.git
 cd BotControl
 ./install
 ```
@@ -152,14 +152,14 @@ cd BotControl
 Or, you can use the `curl` command to install `botctrl` with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/TruthInBeauty/BotControl/refs/heads/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/slbotcontrol/BotControl/refs/heads/main/install | bash
 ```
 
 Alternatively, download the `install` release artifact and execute it.
 The `install` script will clone the repository and install the system:
 
 ```bash
-wget -q https://github.com/TruthInBeauty/BotControl/releases/latest/download/install
+wget -q https://github.com/slbotcontrol/BotControl/releases/latest/download/install
 chmod 755 install
 ./install
 ```
@@ -584,7 +584,7 @@ SHELL=/bin/bash
 # Schedule BotControl actions
 # -------------------------
 # Uses the botctrl command line tool at:
-#   https://github.com/TruthInBeauty/BotControl/blob/main/botctrl
+#   https://github.com/slbotcontrol/BotControl/blob/main/botctrl
 # Assumes some configuration in ~/.botctrl has been performed
 #
 # m h  dom mon dow   command
@@ -974,9 +974,9 @@ View the `botctrl` usage message via the command `botctrl -h`.
 View `botctrl` examples and supported commands via the command `botctrl -e`.
 
 View the `botctrl` manual via the command `man botctrl` or
-[view the manual online](https://github.com/TruthInBeauty/BotControl/blob/main/markdown/botctrl.1.md).
+[view the manual online](https://github.com/slbotcontrol/BotControl/blob/main/markdown/botctrl.1.md).
 
-Issues can be reported at https://github.com/TruthInBeauty/BotControl/issues
+Issues can be reported at https://github.com/slbotcontrol/BotControl/issues
 
 ## LifeBots Control Panel
 
