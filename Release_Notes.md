@@ -157,7 +157,7 @@ Supported actions for LifeBots only:
 Supported actions for Corrade only:
   attach, conference, conference_detail, conference_list, createlandmark, currentsim, detach
   fly, flyto, getattachmentspath, getavatarpickdata, getgroupmemberdata, get_hoverheight,
-  getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata
+  getmembersonline, getregiontop, getselfdata, inventory cwd, key2displayname, networkmanagerdata
 ```
 
 </details>
