@@ -37,7 +37,7 @@ the official product of either. The official `LifeBots` site can be found at
   - [Configure botctrl](#configure-botctrl)
   - [Supported Bot Actions and Examples](#supported-bot-actions-and-examples)
     - [BotControl Examples](#botcontrol-examples)
-  - [Usage and Source of botctrl command](#usage-and-source-of-botctrl-command)
+  - [Usage of botctrl command](#usage-of-botctrl-command)
   - [Scheduling Bot Actions](#scheduling-bot-actions)
   - [Using the JSON return as Input](#using-the-json-return-as-input)
   - [Botctrl Help](#botctrl-help)
@@ -491,7 +491,7 @@ Development is in rapid progress for additional actions.
 
 Let us know which `Corrade` or `LifeBots` API requests you would like supported.
 
-### Usage and Source of botctrl command
+### Usage of botctrl command
 
 <details><summary>Click here to view the
 
