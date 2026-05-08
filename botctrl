@@ -358,7 +358,7 @@ list_supported_actions() {
   printf "\nSupported actions for Corrade only:"
   printf "\n  attach, conference, conference_detail, conference_list, createlandmark, currentsim, detach"
   printf "\n  fly, flyto, getattachmentspath, getavatarpickdata, getgroupmemberdata, get_hoverheight,"
-  printf "\n  getmembersonline, getregiontop, getselfdata, inventory cwd, networkmanagerdata\n"
+  printf "\n  getmembersonline, getregiontop, getselfdata, inventory cwd, key2displayname, networkmanagerdata\n"
 }
 
 get_coords() {
@@ -551,6 +551,9 @@ send_corrade_request() {
       ;;
     key2name)
       COMMAND="\"command\": \"batchavatarkeytoname\", \"avatars\": \"${UUID}\""
+      ;;
+    key2displayname)
+      COMMAND="\"command\": \"getavatardisplayname\", \"agent\": \"${UUID}\""
       ;;
     listinventory)
       COMMAND="\"command\": \"inventory\", \"action\": \"ls\""
@@ -1568,6 +1571,17 @@ case "${ACTION}" in
       send_request "send_group_im" | jq -r .
     else
       send_request "send_group_im"
+    fi
+    ;;
+  key*d*name)
+    [ "${UUID}" ] || {
+      echo "The ${ACTION} action requires an avatar UUID specified with -u uuid"
+      usage brief
+    }
+    if [ "${have_jq}" ]; then
+      send_request "key2displayname" | jq -r .
+    else
+      send_request "key2displayname"
     fi
     ;;
   key*name)
