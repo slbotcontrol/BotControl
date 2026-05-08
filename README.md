@@ -578,7 +578,7 @@ activities using `crontab` entries that execute `Corrade` and `LifeBots` API
 requests at scheduled times. Here is an example `crontab` entry with some brief
 descriptions in comments of what activities are scheduled:
 
-```
+```crontab
 SHELL=/bin/bash
 #
 # Schedule BotControl actions
@@ -598,9 +598,9 @@ SHELL=/bin/bash
 # Monday at 6pm sit Anya in theater seating after her set
 0 18 * * 1 /bin/bash -lc /usr/local/BotControl/anya2seat >> /usr/local/BotControl/log/cron.log 2>&1
 # Tuesday at 6pm send Angelus bot to DJ at the club
-0 18 * * 2 /bin/bash -lc /usr/local/BotControl/angelus2clubdj >> /usr/local/BotControl/log/cron.log 2>&1
+0 18 * * 2 /bin/bash -lc /usr/local/BotControl/angel2clubdj >> /usr/local/BotControl/log/cron.log 2>&1
 # Tuesday at 8pm send Angelus bot back to his dance pole
-0 20 * * 2 /bin/bash -lc /usr/local/BotControl/angelus2pole >> /usr/local/BotControl/log/cron.log 2>&1
+0 20 * * 2 /bin/bash -lc /usr/local/BotControl/angel2pole >> /usr/local/BotControl/log/cron.log 2>&1
 # Friday at 6pm send Easy bot to DJ at the club
 0 18 * * 5 /bin/bash -lc /usr/local/BotControl/easy2clubdj >> /usr/local/BotControl/log/cron.log 2>&1
 # Friday at 8pm send Easy bot back to her dance pole
@@ -608,7 +608,7 @@ SHELL=/bin/bash
 # Saturday at 6pm send all bots to dance at the club
 0 18 * * 6 /bin/bash -lc /usr/local/BotControl/bots2clubdance >> /usr/local/BotControl/log/cron.log 2>&1
 # Saturday at 9pm send all bots back to their default locations
-0 21 * * 6 /bin/bash -lc /usr/local/BotControl/bots2home >> /usr/local/BotControl/log/cron.log 2>&1
+0 21 * * 6 /bin/bash -lc /usr/local/BotControl/bots2club >> /usr/local/BotControl/log/cron.log 2>&1
 # Check every hour if Easy bot is at the club greeting visitors
 # 0 * * * * /bin/bash -lc /usr/local/BotControl/checkbot >> /usr/local/BotControl/log/cron.log 2>&1
 # Send the Easy Islay bot's L$ balance to myself on the 1st of every month
@@ -777,15 +777,24 @@ botctrl -a teleport -n "Easy Islay" -l "http://maps.secondlife.com/secondlife/Sc
 The `botctrl` command returns a JSON object containing the results of the API request. This
 object can be parsed with `jq` and the return values used as input to another `botctrl` command.
 
-For example, if you want to send all of the L$ balance of your bot to yourself:
+For example, if you want to send all of the L$ balance of your bot to yourself, IM your bot's balance
+to yourself, list bot balances, or transfer a specific L$ amount from a bot:
+
+<details><summary>Click here to view
+
+**the send_bot_balance Bash script**
+
+</summary>
 
 ```bash
 #!/usr/bin/env bash
 #
-# send_bot_balance - get the bot's balance and send it to myself
+# send_bot_balance - get the bot's balance and send it to myself or IM the balances
 #
-# Usage: send_bot_balance [-A] [-n bot_name] [-N recipient_name] [-u uuid]
+# Usage: send_bot_balance [-A] [-a amount] [-i] [-l] [-n bot_name] [-N recipient_name] [-u uuid]
 
+## CUSTOMIZE THESE  <<<<<<<
+#
 # Set this to your Second Life avatar name
 DEF_SL_NAME="Missy Restless"
 # Set this to your bot's name
@@ -793,6 +802,10 @@ DEF_BOT_NAME="Easy"
 # Set this to all your bots names or their aliases, for use with -A
 ALL_LB_BOTS="Anya"
 ALL_CO_BOTS="Angel Easy"
+## END CUSTOMIZATION
+
+## DO NOT MODIFY BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING
+#
 ALL_BOTS="${ALL_LB_BOTS} ${ALL_CO_BOTS}"
 CORRADE=
 
@@ -814,12 +827,27 @@ have_jq=$(type -p jq)
 }
 
 usage() {
-  printf "\nUsage: send_bot_balance [-A] [-d] [-n bot_name] [-N recipient_name]\n\n"
+  printf "\nUsage: send_bot_balance [-A] [-a amount] [-d] [-h] [-i] [-l] [-n bot_name] [-N recipient_name]"
   printf "\nWhere:"
   printf "\n\t-A indicates all bots [All Bots: ${ALL_BOTS}]"
+  printf "\n\t-a amount specifies the amount to send [default: entire balance]"
   printf "\n\t-d indicates debug mode, no payment [default: false]"
+  printf "\n\t-i indicates IM the balances rather than sending the balances, no payment"
+  printf "\n\t-l indicates list the balances rather than sending the balances, no payment"
   printf "\n\t-n name specifies the BOT name [default: ${DEF_BOT_NAME}]"
-  printf "\n\t-N recipient_name specifies the payment recipient [default: ${DEF_SL_NAME}]\n\n"
+  printf "\n\t-N recipient_name specifies the payment recipient [default: ${DEF_SL_NAME}]"
+  printf "\n\t-h displays this usage message and exits"
+  printf "\nExamples:"
+  printf "\n\tIM all bot balances to avatar Sindy Payne (no payment)"
+  printf "\n\t\tsend_bot_balance -A -i -N \"Sindy Payne\""
+  printf "\n\tList all bot balances (no payment)"
+  printf "\n\t\tsend_bot_balance -A -l"
+  printf "\n\tSend all bot balances to avatar Janet Dobro"
+  printf "\n\t\tsend_bot_balance -A -N \"Janet Dobro\""
+  printf "\n\tSend bot named Bunny Floofoo balance to the default recipient avatar (${DEF_SL_NAME})"
+  printf "\n\t\tsend_bot_balance -n \"Bunny Floofoo\""
+  printf "\n\tSend L\$250 from bot named Ana Koi to avatar Rawr Talent"
+  printf "\n\t\tsend_bot_balance -a 250 -n \"Ana Koi\" -N \"Rawr Talent\"\n\n"
   exit 1
 }
 
@@ -868,25 +896,66 @@ send_balance() {
 
   # Send balance if it is greater than 0
   [ "${debug}" ] && echo "Balance = ${BALANCE}"
-  [ ${BALANCE} -gt 0 ] && {
+  if [ "${message}" ]; then
     [ "${debug}" ] && {
-      echo "Sending bot balance to ${SL_NAME} with:"
-      echo "botctrl -a give_money ${bot_arg} \"${BOT_NAME}\" -A \"${SL_UUID}\" -z ${BALANCE} ${debug}"
+      echo "Messaging bot balance to ${SL_NAME} with:"
+      echo "botctrl -a im ${bot_arg} \"${BOT_NAME}\" -N \"${SL_UUID}\" -M \"My current balance is L\$${BALANCE}\" ${debug}"
     }
-    botctrl -a give_money ${bot_arg} "${BOT_NAME}" -A "${SL_UUID}" -z ${BALANCE} ${debug}
-  }
+    botctrl -a im ${bot_arg} "${BOT_NAME}" -N "${SL_UUID}" -M "My current balance is L\$${BALANCE}" ${debug}
+  else
+    if [ "${list}" ]; then
+      printf "\n%s balance:\tL\$%s\n" "${BOT_NAME}" "${BALANCE}"
+    else
+      if [ ${BALANCE} -gt 0 ]; then
+        if [ "${amount}" ]; then
+          if [ ${amount} -le ${BALANCE} ]; then
+            BALANCE="${amount}"
+          else
+            echo "ERROR: insufficient balance to send L\$${amount}"
+            exit 1
+          fi
+          [ "${debug}" ] && {
+            echo "Sending L\$${BALANCE} from bot to ${SL_NAME} with:"
+            echo "botctrl -a give_money ${bot_arg} \"${BOT_NAME}\" -A \"${SL_UUID}\" -z ${BALANCE} ${debug}"
+          }
+        else
+          [ "${debug}" ] && {
+            echo "Sending bot balance to ${SL_NAME} with:"
+            echo "botctrl -a give_money ${bot_arg} \"${BOT_NAME}\" -A \"${SL_UUID}\" -z ${BALANCE} ${debug}"
+          }
+        fi
+        botctrl -a give_money ${bot_arg} "${BOT_NAME}" -A "${SL_UUID}" -z ${BALANCE} ${debug}
+      else
+        echo "${BOT_NAME} zero balance"
+      fi
+    fi
+  fi
 }
+
+[ $# -eq 0 ] && usage
 
 BOT_NAME= SL_NAME=
 allbots=
+amount=
 debug=
-while getopts ":Adn:N:h" flag; do
+list=
+message=
+while getopts ":Aa:diln:N:h" flag; do
   case $flag in
     A)
       allbots=1
       ;;
+    a)
+      amount="$OPTARG"
+      ;;
     d)
       debug="-d"
+      ;;
+    i)
+      message=1
+      ;;
+    l)
+      list=1
       ;;
     n)
       BOT_NAME="$OPTARG"
@@ -959,14 +1028,24 @@ else
 fi
 ```
 
+</details>
+
 A script like this could be used to automate transfer of L$ from your bots to your
 primary avatar. For example, automated transfer of a bot's L$ balance on the 1st of
 every month could be setup to run as a `cron` job with the following `crontab` entry:
 
-```
+```crontab
 # Send the Easy Islay bot's L$ balance to myself on the 1st of every month
-0 0 1 * * /bin/bash -lc /usr/local/BotControl/send_easy_balance >> /usr/local/BotControl/log/easy.log 2>&1
+0 0 1 * * /bin/bash -lc '/usr/local/BotControl/send_bot_balance -n Easy' >> /usr/local/BotControl/log/easy.log 2>&1
 ```
+
+Or simply IM your bots' balances to yourself periodically:
+
+```crontab
+# IM all bots L$ balance to myself on the 1st of every month
+0 0 1 * * /bin/bash -lc '/usr/local/BotControl/send_bot_balance -A -i' >> /usr/local/BotControl/log/easy.log 2>&1
+```
+
 ### Botctrl Help
 
 View the `botctrl` usage message via the command `botctrl -h`.
