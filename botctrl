@@ -215,6 +215,21 @@ examples() {
   exit 1
 }
 
+is_valid_csv() {
+  local input_string="$1"
+  # Check if the string contains a comma
+  if [[ "$input_string" == *","* ]]; then
+    # Check if the string contains a comma at the beginning or end
+    if [[ "$input_string" == ","* ]] || [[ "$input_string" == *"," ]]; then
+      return 1
+    else
+      return 0
+    fi
+  else
+    return 1
+  fi
+}
+
 is_valid_uuid() {
   local uuid="$1"
   if [[ $uuid =~ ^\{?[A-F0-9a-f]{8}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{4}-[A-F0-9a-f]{12}\}?$ ]]; then
@@ -329,16 +344,16 @@ list_aliases() {
 }
 
 list_supported_actions() {
-  printf "\nSupported LifeBots actions:"
-  printf "\n  login, logout, status, bot_location, walkto, sit, stand, teleport, listalias, key2name, notecard_create,"
-  printf "\n  avatar_picks, name2key, listinventory, im, reply_dialog, send_notice, send_group_im, attachments,"
-  printf "\n  rebake, touch_attachment, touch_prim, activate_group, wear, takeoff, say_chat_channel, set_hoverheight,"
-  printf "\n  get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object"
-  printf "\nSupported Corrade actions:"
-  printf "\n  activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,"
-  printf "\n  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im, cwd"
-  printf "\n  inventory list current outfit, inventory list outfits, login, logout, pay avatar, pay object"
-  printf "\n  say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear\n"
+  printf "\nSupported actions common to both Corrade and LifeBots:"
+  printf "\n  activate_group, attachments, get_balance, get_outfit, get_outfits, give_money,"
+  printf "\n  give_money_object, im, key2name, listinventory, login, logout, name2key, notecard_create,"
+  printf "\n  rebake, say_chat_channel, send_group_im, send_notice, set_hoverheight, sit, stand,"
+  printf "\n  takeoff, teleport, touch_prim, walkto, wear, wear_outfit"
+  printf "\nSupported actions for LifeBots only:"
+  printf "\n  avatar_picks, bot_location, give_inventory, reply_dialog, status, touch_attachment"
+  printf "\nSupported actions for Corrade only:"
+  printf "\n  attach, conference, conference_detail, conference_list, createlandmark, detach,"
+  printf "\n  fly, flyto, getattachmentspath, get_hoverheight, getmembersonline, inventory cwd\n"
 }
 
 get_coords() {
@@ -443,6 +458,34 @@ send_corrade_request() {
         COMMAND="\"command\": \"detach\", \"type\": \"UUID\", \"attachments\": \"${UUID}\""
       fi
       ;;
+    conference|creat*confer*|confer*creat*)
+      [ "${TEXT}" ] || {
+        echo "The ${cmd} action requires a comma separated list of avatar name/uuid specified with -T \"av1,av2,...\""
+        usage brief
+      }
+      is_valid_csv "${TEXT}" || {
+        echo "Not a valid comma separated list: ${TEXT}"
+        usage brief
+      }
+      COMMAND="\"command\": \"conference\", \"action\": \"create\", \"avatars\": \"${TEXT}\""
+      ;;
+    say*confer*|confer*say)
+      [ "${UUID}" ] || {
+        echo "The ${cmd} action requires a conference session UUID specified with -u UUID"
+        usage brief
+      }
+      COMMAND="\"command\": \"tell\", \"entity\": \"conference\", \"session\": \"${UUID}\", \"message\": \"${MESSAGE}\""
+      ;;
+    list*confer*|confer*list*)
+      COMMAND="\"command\": \"conference\", \"action\": \"list\""
+      ;;
+    det*confer*|confer*det*)
+      [ "${UUID}" ] || {
+        echo "The ${cmd} action requires a conference session UUID specified with -u UUID"
+        usage brief
+      }
+      COMMAND="\"command\": \"conference\", \"action\": \"detail\", \"session\": \"${UUID}\""
+      ;;
     creat*landmark|creat*lm)
       [ "${SL_NAME}" ] || {
         echo "The ${cmd} action requires a Landmark Name specified with -N name"
@@ -471,6 +514,9 @@ send_corrade_request() {
       ;;
     get_balance|getbalance|balance)
       COMMAND="\"command\": \"getbalance\""
+      ;;
+    get*hover*|get*zoffset)
+      COMMAND="\"command\": \"avatarzoffset\", \"action\": \"get\", \"offset\": \"${HEIGHT}\""
       ;;
     getcwd|cwd)
       COMMAND="\"command\": \"inventory\", \"action\": \"cwd\""
@@ -527,6 +573,9 @@ send_corrade_request() {
                \"type\": \"normal\", \
                \"channel\": \"${CHANNEL}\", \
                \"message\": \"${MESSAGE}\""
+      ;;
+    set*hover*|set*zoffset)
+      COMMAND="\"command\": \"avatarzoffset\", \"action\": \"get\", \"offset\": \"${HEIGHT}\""
       ;;
     sit|touch*)
       if [ "${UUID}" ]; then
@@ -1505,6 +1554,17 @@ case "${ACTION}" in
       send_request "im"
     fi
     ;;
+  say*confer*|confer*say)
+    [ "${MESSAGE}" ] || {
+      echo "The ${ACTION} action requires a Message body specified with -M message"
+      usage brief
+    }
+    if [ "${have_jq}" ]; then
+      send_request "sayconference" | jq -r .
+    else
+      send_request "sayconference"
+    fi
+    ;;
   say*|say_*)
     [ "${MESSAGE}" ] || {
       echo "The ${ACTION} action requires a Message body specified with -M message"
@@ -1516,7 +1576,14 @@ case "${ACTION}" in
       send_request "say_chat_channel"
     fi
     ;;
-  *height*|*hover*)
+  get*height*|get*hover*)
+    if [ "${have_jq}" ]; then
+      send_request "get_hoverheight" | jq -r .
+    else
+      send_request "get_hoverheight"
+    fi
+    ;;
+  set*height*|set*hover*)
     [ "${HEIGHT}" ] || {
       echo "The ${ACTION} action requires a hover height adjustment specified with -z num"
       usage brief

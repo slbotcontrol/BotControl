@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+#
+# Set this to the default name of the Corrade bot you want to use to create a conference
+DEF_BOT="Easy"
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_co=$(type -p corrade)
+[ "${have_co}" ] || {
+  echo "ERROR: cannot locate corrade in PATH"
+  exit 1
+}
+
+# jq is required to parse the return and get the conference session UUID
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || {
+  echo "ERROR: cannot locate jq in PATH"
+  exit 1
+}
+
+usage() {
+  printf "\nUsage: create_conference [-d] [-n corrade_bot_name] [-A \"avi_1,avi_2,avi_3,...\""
+  printf "\nWhere:"
+  printf "\n\t-d indicates debug mode"
+  printf "\n\t-n corrade_bot_name specifies the Corrade bot name to use to create the conference"
+  printf "\n\t-A \"avi list\" is a comma separated list of avatar names or UUIDs to include in the conference"
+  printf "\n\t-u displays this usage message and exits\n"
+  exit 1
+}
+
+AVATARS=
+DEBUG=
+while getopts ":A:dn:u" flag; do
+  case $flag in
+    A)
+      AVATARS="$OPTARG"
+      ;;
+    d)
+      DEBUG=1
+      ;;
+    n)
+      BOT="$OPTARG"
+      ;;
+    u)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ "${DEBUG}" ] && {
+  echo "Creating conference and retrieving conference UUID with the command:"
+  echo "corrade -a conference -n ${BOT} -T \"${AVATARS}\" | jq -r '.data[].session'"
+}
+SESS_UUID=$(corrade -a conference -n ${BOT} -T "${AVATARS}" | jq -r '.data[].session')
+[ "${DEBUG}" ] && {
+  echo "Sending message to conference with list of avatars included:"
+  echo "corrade -a sayconference -n ${BOT} -u \"${SESS_UUID}\" -M \"Conference created with ${AVATARS}\""
+}
+corrade -a sayconference -n ${BOT} -u "${SESS_UUID}" -M "Conference created with ${AVATARS}"
