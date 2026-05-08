@@ -616,7 +616,13 @@ SHELL=/bin/bash
 ```
 
 Here is the code for one of the control scripts, the `checkstatus` script that
-reports the online/offline status of configured bots:
+reports the online/offline status of configured bots.
+
+<details><summary>Click here to view
+
+**the checkstatus Bash script**
+
+</summary>
 
 ```bash
 #!/usr/bin/env bash
@@ -655,29 +661,11 @@ usage() {
   exit 1
 }
 
-check_co_bot() {
-  local slbot="$1"
-  # Check for Name alias in ~/.botctrl
-  local SL_NAME="${slbot}"
-  local botname=$(echo "${slbot}" | sed -e "s/ /_/g")
-  local envname="BOT_NAME_${botname}"
-  [ "${!envname}" ] && SL_NAME="${!envname}"
-  if botctrl -a status -c "${SL_NAME}" 2>&1 | grep 'parse error' >/dev/null; then
-    STATUS="OFFLINE"
-  else
-    STATUS="ONLINE"
-  fi
-  if [ "${have_jq}" ]; then
-    printf "\n{\n  \"action\": \"status\",\n  \"status\": \"${STATUS}\",\n  \"slname\": \"${SL_NAME}\"\n}\n" | jq -r .
-  else
-    printf '\n{'
-    printf '\n  "action": "status",'
-    printf "\n  \"status\": \"${STATUS}\","
-    printf "\n  \"slname\": \"${SL_NAME}\""
-    printf '\n}\n'
-  fi
-  sleep 2
+[ -f /usr/local/BotControl/lib/status ] || {
+  echo "ERROR: cannot locate /usr/local/BotControl/lib/status"
+  exit 1
 }
+source /usr/local/BotControl/lib/status
 
 BOT= allbots=1 corrade= lifebot=
 while getopts ":Acln:h" flag; do
@@ -751,6 +739,8 @@ else
   fi
 fi
 ```
+
+</details>
 
 This script uses a couple of aliases defined in `$HOME/.botctrl`, the `club`
 location alias and the `Easy` bot name alias:
