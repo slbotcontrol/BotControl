@@ -65,7 +65,8 @@ if [ -r "${FILE}" ]; then
   cat "${FILE}" | while read uuid
   do
     [ "${uuid}" ] && {
-      corrade -a key2displayname -c ${BOT} -u ${uuid} | jq -r '.data[1]'
+      a_name=$(corrade -a key2displayname -n "${BOT}" -u "${uuid}" | jq -r '.data[0]')
+      echo "${a_name},${uuid}"
     }
   done
 else
