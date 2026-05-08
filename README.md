@@ -1,15 +1,22 @@
 # BotControl Second Life Bots Command Line Control
 
-**NEW** The `botctrl` command now supports management of both `LifeBots` and `Corrade` bots.
-
 Install `BotControl`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/missyrestless/BotControl/refs/heads/main/install | bash
 ```
 
-This repository contains commands, configuration, and management scripts for Second Life
-scripted agents (bots). Included are management systems for `Corrade` and `LifeBots` bots.
+`BotControl` is a command line management system for `LifeBots` and `Corrade` Second Life
+scripted agents (bots). The `botctrl` command can be used to manage either `Lite` or `Full` bots
+from `LifeBots` as well as `Corrade` bots configured with the built-in Corrade HTTP service enabled.
+
+The `botctrl` command is installed as `/usr/local/bin/botctrl` and symbolic links are created
+for the commands `/usr/local/bin/corrade` and `/usr/local/bin/lifebot`. When invoked as `corrade`
+the command uses the Corrade API to control Corrade bots. When invoked as `lifebot` the command
+uses the LifeBots API to control LifeBots bots. When invoked as `botctrl` the command can control
+either Corrade or LifeBots bots, determining which API to use based on how the bot name was specified
+on the command line: `botctrl -c "bot name" ...` indicates use the Corrade API to control a Corrade
+bot while `botctrl -n "bot name" ...` indicates control of a LifeBots bot.
 
 **[NOTE:]** Missy Restless and the Truth &amp; Beauty Lab are not affiliated with
 `Corrade` or `LifeBots` other than contributing `LifeBots` Knowledge Base articles.
