@@ -21,7 +21,7 @@ lifebot - Manage LifeBots Second Life bots from the command line
 botctrl [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k apikey] [-C channel] [-c corrade]
   [-D data] [-F filter] [-M message] [-N name] [-O name] [-S subject] [-s secret] [-T text] [-u uuid] [-z num]
 
-See the [BotControl Github repository README](https://github.com/missyrestless/BotControl)
+See the [BotControl Github repository README](https://github.com/TruthInBeauty/BotControl)
 article for additional information on the `botctrl` command and associated tools.
 
 ## DESCRIPTION
@@ -512,10 +512,10 @@ SOFTWARE.
 
 Submit bug reports online at:
 
-<https://github.com/missyrestless/BotControl/issues>
+<https://github.com/TruthInBeauty/BotControl/issues>
 
 ## SEE ALSO
 
 Full documentation and sources at:
 
-<https://github.com/missyrestless/BotControl>
+<https://github.com/TruthInBeauty/BotControl>
