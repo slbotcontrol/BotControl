@@ -536,7 +536,7 @@ send_corrade_request() {
       COMMAND="\"command\": \"getbalance\""
       ;;
     get*hover*|get*zoffset)
-      COMMAND="\"command\": \"avatarzoffset\", \"action\": \"get\", \"offset\": \"${HEIGHT}\""
+      COMMAND="\"command\": \"avatarzoffset\", \"action\": \"get\""
       ;;
     getcwd|cwd)
       COMMAND="\"command\": \"inventory\", \"action\": \"cwd\""
@@ -604,7 +604,7 @@ send_corrade_request() {
                \"message\": \"${MESSAGE}\""
       ;;
     set*hover*|set*zoffset)
-      COMMAND="\"command\": \"avatarzoffset\", \"action\": \"get\", \"offset\": \"${HEIGHT}\""
+      COMMAND="\"command\": \"avatarzoffset\", \"action\": \"set\", \"offset\": \"${HEIGHT}\""
       ;;
     sit|touch*)
       if [ "${UUID}" ]; then
