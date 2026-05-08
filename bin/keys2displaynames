@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# keys2displaynames - convert a list of avatar UUIDs to a list of avatar display names
+#
+# Only works with a Corrade bot
+#
+# Reads a file with avatar UUIds, one per line, and outputs the avatar display names
+#
+# Usage: keys2displaynames [-n name] [-f /path/to/file ]
+#
+# Default Bot
+DEF_BOT="Easy"
+# Default Filename
+DEF_FILE="AVATAR_UUIDS"
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_lb=$(type -p botctrl)
+[ "${have_lb}" ] || {
+  echo "ERROR: cannot locate botctrl in PATH"
+  exit 1
+}
+
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || {
+  echo "ERROR: cannot locate jq in PATH"
+  exit 1
+}
+
+usage() {
+  printf "\nUsage: keys2displaynames [-n name] [-f /path/to/file]"
+  printf "\nWhere:"
+  printf "\n\t-n name specifies the BOT name [default: ${DEF_BOT}]"
+  printf "\n\t-f file specifies the path to a file with UUIDs [default: ${DEF_FILE}]\n\n"
+  exit 1
+}
+
+BOT= FILE=
+while getopts ":n:f:h" flag; do
+  case $flag in
+    n)
+      BOT="$OPTARG"
+      ;;
+    f)
+      FILE="$OPTARG"
+      ;;
+    h)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ "${BOT}" ] || BOT="${DEF_BOT}"
+[ "${FILE}" ] || FILE="${DEF_FILE}"
+
+if [ -r "${FILE}" ]; then
+  cat "${FILE}" | while read uuid
+  do
+    [ "${uuid}" ] && {
+      corrade -a key2displayname -c ${BOT} -u ${uuid} | jq -r '.data[1]'
+    }
+  done
+else
+  echo "${FILE} does not exist or is not readable. Exiting."
+  usage
+fi
