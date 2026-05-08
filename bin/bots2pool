@@ -34,17 +34,17 @@ done
 botctrl -a stand -c Angel >/dev/null 2>&1
 sleep 1
 botctrl -a teleport -c Angel -l zen >/dev/null 2>&1
-sleep 5
+sleep 8
 botctrl -a sit -c Angel -u hottub
 
 # Send Anya to the pool float
 botctrl -a teleport -n Anya -l zen
-sleep 5
+sleep 8
 botctrl -a sit -n Anya -u zfloat
 
 # Send Easy to the right lounge chair
 botctrl -a stand -c Easy >/dev/null 2>&1
 sleep 1
 botctrl -a teleport -c Easy -l zen
-sleep 5
+sleep 8
 botctrl -a sit -c Easy -u zlounger

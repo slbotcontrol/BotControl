@@ -79,6 +79,6 @@ do
   botctrl -a stand -c ${bot} >/dev/null 2>&1
   sleep 1
   botctrl -a teleport -c ${bot} -l "${LOC}" >/dev/null 2>&1
-  sleep 5
+  sleep 8
   botctrl -a ${ACTION} -c ${bot} -u ${UUID}
 done
