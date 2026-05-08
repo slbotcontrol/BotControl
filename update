@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+#
+# update - run this script to update BotControl to the latest committed version
+#
+REPO="missyrestless/BotControl"
+
+SCRIPT_PATH="$(
+  cd "$(dirname "$0")"
+  pwd -P
+)"
+have_real=$(type -p realpath)
+[ "${have_real}" ] && SCRIPT_PATH="$(realpath $SCRIPT_PATH)"
+
+cd "${SCRIPT_PATH}"
+
+have_curl=$(type -p curl)
+if [ "${have_curl}" ]; then
+  curl -fsSL https://raw.githubusercontent.com/${REPO}/refs/heads/main/install | bash
+else
+  have_git=$(type -p git)
+  if [ "${have_git}" ]; then
+    # First check if we are in the BotControl repo and if so then pull
+    if [ -f .git/config ]; then
+      grep ${REPO} .git/config >/dev/null && {
+        git pull
+        ./install
+        exit 0
+      }
+    else
+      # Clone the repository and run the install script
+      mkdir -p /tmp/botctrl$$
+      if [ -d /tmp/botctrl$$ ]; then
+        cd /tmp/botctrl$$
+        git clone https://github.com/${REPO}.git
+        BotControl/install
+        cd /tmp
+        rm -rf botctrl$$
+        exit 0
+      else
+        echo "ERROR: unable to create working directory in /tmp"
+        exit 1
+      fi
+    fi
+  else
+    echo "ERROR: cannot locate curl or git. Exiting."
+    exit 1
+  fi
+fi

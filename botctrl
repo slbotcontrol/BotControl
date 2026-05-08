@@ -46,8 +46,8 @@ BOLD=$(tput bold 2> /dev/null)
 NORM=$(tput sgr0 2> /dev/null)
 LINE=$(tput smul 2> /dev/null)
 
-SCRIPT_FULL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
-SCRIPT_NAME="$(basename "$SCRIPT_FULL_PATH")"
+SCRIPT_FULL_PATH="$0"
+SCRIPT_NAME=$(basename "${SCRIPT_FULL_PATH}")
 
 usage() {
   [ "${nobold}" ] && {
@@ -989,10 +989,15 @@ send_request() {
     shift
     send_lifebot_request "$@"
   else
-    if [ "${corrade}" ]; then
+    if [ "$1" == "-c" ]; then
+      shift
       send_corrade_request "$@"
     else
-      send_lifebot_request "$@"
+      if [ "${corrade}" ]; then
+        send_corrade_request "$@"
+      else
+        send_lifebot_request "$@"
+      fi
     fi
   fi
 }
@@ -1006,7 +1011,12 @@ CORRADE_BOT_ID= CORRADE_BOT_NAME= CORRADE_BOT_URL= UUID= WEARABLE=
 # Use jq to format JSON return if it is available
 have_jq=$(type -p jq)
 
-command_line_secret= details= dryrun= nobold= corrade= verb="-s"
+if [ "${SCRIPT_NAME}" == "corrade" ]; then
+  corrade=1
+else
+  corrade=
+fi
+command_line_secret= details= dryrun= nobold= verb="-s"
 while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
   case $flag in
     a)
@@ -1020,7 +1030,6 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
       ;;
     c)
       CORRADE_BOT_NAME="${OPTARG}"
-      # have_jq=
       ;;
     d)
       dryrun=1
@@ -1046,6 +1055,7 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
       ;;
     n)
       BOT_NAME="${OPTARG}"
+      [ "${corrade}" ] && CORRADE_BOT_NAME="${OPTARG}"
       ;;
     O)
       OBJ_NAME="${OPTARG}"
@@ -1091,6 +1101,25 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
   esac
 done
 shift $(( OPTIND - 1 ))
+
+# If invoked as "lifebot" only control LifeBots bots
+[ "${SCRIPT_NAME}" == "lifebot" ] && {
+  corrade=
+  [ "${CORRADE_BOT_NAME}" ] && {
+    if [ "${BOT_NAME}" ]; then
+      # Both -c and -n were specified using the lifebot command, what to do?
+      # I guess if they are both the same then continue, otherwise exit with usage
+      [ "${CORRADE_BOT_NAME}" == "${BOT_NAME}" ] || {
+        echo "Both -c name and -n name cannot be specified when invoked using the lifebot command"
+        echo "Use the botctrl command to specify both -c and -n names, lifebot only controls LifeBots"
+        usage brief
+      }
+    else
+      BOT_NAME="${CORRADE_BOT_NAME}"
+    fi
+    CORRADE_BOT_NAME=
+  }
+}
 
 # Check for Name alias in ~/.botctrl
 [ "${BOT_NAME}" ] && {

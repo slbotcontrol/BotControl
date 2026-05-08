@@ -1,8 +1,84 @@
 # BotControl Second Life Bots Command Line Control
 
 **NEW** The `botctrl` command now supports management of both `LifeBots` and `Corrade` bots.
-To manage a `Corrade` bot simply replace the `-n <bot name or alias>` command line argument
-with `-c <bot name or alias>`.
+
+Install `BotControl`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/missyrestless/BotControl/refs/heads/main/install | bash
+```
+
+This repository contains commands, configuration, and management scripts for Second Life
+scripted agents (bots). Included are management systems for `Corrade` and `LifeBots` bots.
+
+**[NOTE:]** Missy Restless and the Truth &amp; Beauty Lab are not affiliated with
+`Corrade` or `LifeBots` other than contributing `LifeBots` Knowledge Base articles.
+This repository provides 3rd party tools for `Corrade` and `LifeBots` and is not
+the official product of either. The official `LifeBots` site can be found at
+[https://lifebots.cloud](https://lifebots.cloud) and `Corrade` at
+[https://grimore.org/secondlife/scripted_agents/corrade](https://grimore.org/secondlife/scripted_agents/corrade).
+
+## Table of Contents
+
+- [Overview](#overview)
+  - [Corrade Overview](#corrade-overview)
+  - [LifeBots Overview](#lifebots-overview)
+- [BotControl Command Line](#botcontrol-command-line)
+  - [Requirements](#requirements)
+  - [Install botctrl](#install-botctrl)
+  - [Configure Corrade for use with the botctrl command](#configure-corrade-for-use-with-the-botctrl-command)
+  - [Configure botctrl](#configure-botctrl)
+  - [Supported Bot Actions and Examples](#supported-bot-actions-and-examples)
+  - [Usage and Source of botctrl command](#usage-and-source-of-botctrl-command)
+  - [Scheduling Bot Actions](#scheduling-bot-actions)
+  - [Using the JSON return as Input](#using-the-json-return-as-input)
+  - [Botctrl Help](#botctrl-help)
+- [LifeBots Control Panel](#lifebots-control-panel)
+
+## Overview
+
+Truth &amp; Beauty Lab hosts repositories that provide a command line management
+system for `Corrade` and `LifeBots` bots as well as an in-world scripted object,
+`LifeBots Control Panel`, that acts as a bridge between `LifeBots` management
+scripts and `LifeBots` bots.
+
+Both `LifeBots` subscription plans provide a web UI and HUD that can be used for
+interactive control of `LifeBots` bots and, for many users, this is sufficient.
+There is also a `Corrade` HUD available on the marketplace. The `BotControl` project
+is attempting to provide tools that go well beyond the capabilities of these HUDs
+and leverage the powerful features provided by the `Corrade` and `LifeBots` API.
+
+For developers who wish to script `LifeBots` management, command, and control, the
+[LifeBots Control Panel](https://github.com/missyrestless/LifeBotsControlPanel#readme)
+provides and easy to use in-world interface to the `LifeBots API`, enabling the
+automation of many of the rich `LifeBots` feature set.
+
+For those power users who wish to automate their `Corrade` and `LifeBots` bots using
+the command line and tools such as `cron` and `jq`, the `botctrl` command and associated
+utilities found here may provide additional power and flexibility.
+
+The `BotControl` command line management system is open source and free to download,
+deploy, modify, and distribute.
+
+`Corrade` and `LifeBots` bots managed by the `botctrl` command line and scheduled using
+the Unix `cron` facility can be viewed and interacted with in Second Life at the
+[Truth & Beauty Lab](http://maps.secondlife.com/secondlife/Brightbrook%20Isle/56/135/23)
+or [Club Truth & Beauty](http://maps.secondlife.com/secondlife/Scylla/226/32/78).
+
+### Corrade Overview
+
+The primary advantage of `Corrade` over most other Second Life bots is the
+ability to self-host `Corrade` meaning I can run it on my own computers, manage
+and update it myself, and my bots are not dependant on some cloud service
+that may disappear at any time. This is a significant advantage.
+
+`Corrade` is a multi-purpose, multi-platform scripted agent (bot) that runs under
+Windows or Unix natively, as a service or daemon whilst staying connected to a
+Linden-based grid (either Second Life or OpenSim) and controlled entirely by scripts.
+
+The scripts in this repository are original scripting by Truth &amp; Beauty Lab.
+
+### LifeBots Overview
 
 [LifeBots](https://lifebots.cloud) bills itself as:
 
@@ -29,43 +105,6 @@ alternative to the cloud based subscription service `LifeBots` offers.
 | AI Access                    | AI Functions                 |
 |                              | Avatar Specific Memory       |
 |                              | Advanced analytics           |
-
-Truth & Beauty Lab hosts repositories that provide a command line management
-system for `LifeBots` and an in-world scripted object, `LifeBots Control Panel`,
-that acts as a bridge between `LifeBots` management scripts and `LifeBots` bots.
-
-Both `LifeBots` subscription plans provide a web UI and HUD that can be used for
-interactive control of `LifeBots` bots and, for many users, this is sufficient.
-
-For developers who wish to script `LifeBots` management, command, and control,
-the `LifeBots Control Panel` provides and easy to use in-world interface to the
-`LifeBots API`, enabling the automation of many of the rich `LifeBots` feature set.
-
-For those power users who wish to automate their `Corrade` and `LifeBots` bots using
-the command line and tools such as `cron` and `jq` the `botctrl` command and associated
-utilities found here may provide additional power and flexibility.
-
-The `BotControl` command line management system is open source and free to download,
-deploy, modify, and distribute.
-
-`Corrade` and `LifeBots` bots managed by the `botctrl` command line and scheduled using
-the Unix `cron` facility can be viewed and interacted with in Second Life at the
-[Truth & Beauty Lab](http://maps.secondlife.com/secondlife/Brightbrook%20Isle/56/135/23)
-or [Club Truth & Beauty](http://maps.secondlife.com/secondlife/Scylla/226/32/78).
-
-## Table of Contents
-
-- [BotControl Command Line](#botcontrol-command-line)
-  - [Requirements](#requirements)
-  - [Install botctrl](#install-botctrl)
-  - [Configure Corrade for use with the botctrl command](#configure-corrade-for-use-with-the-botctrl-command)
-  - [Configure botctrl](#configure-botctrl)
-  - [Supported Bot Actions and Examples](#supported-bot-actions-and-examples)
-  - [Usage and Source of botctrl command](#usage-and-source-of-botctrl-command)
-  - [Scheduling Bot Actions](#scheduling-bot-actions)
-  - [Using the JSON return as Input](#using-the-json-return-as-input)
-  - [Botctrl Help](#botctrl-help)
-- [LifeBots Control Panel](#lifebots-control-panel)
 
 ## BotControl Command Line
 
@@ -162,11 +201,14 @@ Add `/usr/local/bin` to your execution `PATH` if it is not already included.
 
 Configure `botctrl` by adding and editing the file `${HOME}/.botctrl`.
 
-At a minimum, you must configure your `LifeBots` developer API key and bot
-secrets for the `LifeBots` bots you wish to control using the `lifebot` command.
+If you wish to control `LifeBots` bots then you must configure your `LifeBots`
+developer API key and bot secrets for the `LifeBots` bots you wish to control.
 
-The following example entries in `$HOME/.botctrl` will allow you to control your
-`LifeBots` bot named "Your Botname" using the `botctrl` command:
+If you wish to control `Corrade` bots then you must configure your `Corrade`
+group, password, and server URL.
+
+The following example entries in `$HOME/.botctrl` will allow you to control a
+`LifeBots` bot named "Your Botname" and a `Corrade` bot named "Cory Bot":
 
 ```bash
 # Minimum contents of $HOME/.botctrl
@@ -175,12 +217,23 @@ The following example entries in `$HOME/.botctrl` will allow you to control your
 export LB_API_KEY='<your-lifebots-api-key>'
 # LifeBots bot secret
 export LB_SECRET_Your_Botname='<your-bot-secret>'
+# Corrade Group, Password, and Server URL
+export CORRADE_GROUP="<your-corrade-bot-group-name>"
+export CORRADE_PASSW="<your-corrade-bot-group-password>"
+export CORRADE_URL="https://your.corrade.server"
+# The Corrade bot's API URL
+# This assumes a reverse proxy setup has been configured and this URL
+# path is passed by the web server to the appropriate Corrade HTTP port
+export API_URL_Cory_Bot="${CORRADE_URL}/cory/"
 ```
 
 Add an entry of the form `export LB_SECRET_Firstname_Lastname='<bot-secret>'`
 to `$HOME/.botctrl` for each of your `LifeBots` bots.
 
-See `BotControl/example_dot_botctrl` for a template to use for this file.
+Add an entry of the form `export API_URL_Firstname_Lastname="${CORRADE_URL}/path/"`
+to `$HOME/.botctrl` for each of your `Corrade` bots.
+
+See `BotControl/example_dot_botctrl` for a template to use for `$HOME/.botctrl`.
 
 See `BotControl/crontab.in` for example crontab entries to schedule bot activities.
 
@@ -482,7 +535,7 @@ LB_BOT_NAME="Anya Ordinary"
 # Set the default action, can be specified with -a action
 ACTION="status"
 # LifeBots API endpoint
-APIURL="https://api.botctrl.cloud/api"
+APIURL="https://api.lifebots.cloud/api"
 ENDPOINT="${APIURL}/bot.html"
 # Set the default login location
 LOCATION="Last location"
@@ -495,8 +548,8 @@ BOLD=$(tput bold 2> /dev/null)
 NORM=$(tput sgr0 2> /dev/null)
 LINE=$(tput smul 2> /dev/null)
 
-SCRIPT_FULL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
-SCRIPT_NAME="$(basename "$SCRIPT_FULL_PATH")"
+SCRIPT_FULL_PATH="$0"
+SCRIPT_NAME=$(basename "${SCRIPT_FULL_PATH}")
 
 usage() {
   [ "${nobold}" ] && {
@@ -1438,10 +1491,15 @@ send_request() {
     shift
     send_lifebot_request "$@"
   else
-    if [ "${corrade}" ]; then
+    if [ "$1" == "-c" ]; then
+      shift
       send_corrade_request "$@"
     else
-      send_lifebot_request "$@"
+      if [ "${corrade}" ]; then
+        send_corrade_request "$@"
+      else
+        send_lifebot_request "$@"
+      fi
     fi
   fi
 }
@@ -1455,7 +1513,12 @@ CORRADE_BOT_ID= CORRADE_BOT_NAME= CORRADE_BOT_URL= UUID= WEARABLE=
 # Use jq to format JSON return if it is available
 have_jq=$(type -p jq)
 
-command_line_secret= details= dryrun= nobold= corrade= verb="-s"
+if [ "${SCRIPT_NAME}" == "corrade" ]; then
+  corrade=1
+else
+  corrade=
+fi
+command_line_secret= details= dryrun= nobold= verb="-s"
 while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
   case $flag in
     a)
@@ -1469,7 +1532,6 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
       ;;
     c)
       CORRADE_BOT_NAME="${OPTARG}"
-      # have_jq=
       ;;
     d)
       dryrun=1
@@ -1495,6 +1557,7 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
       ;;
     n)
       BOT_NAME="${OPTARG}"
+      [ "${corrade}" ] && CORRADE_BOT_NAME="${OPTARG}"
       ;;
     O)
       OBJ_NAME="${OPTARG}"
@@ -1540,6 +1603,25 @@ while getopts ":a:A:c:C:dijF:l:M:N:n:O:k:S:s:T:u:vz:Heh" flag; do
   esac
 done
 shift $(( OPTIND - 1 ))
+
+# If invoked as "lifebot" only control LifeBots bots
+[ "${SCRIPT_NAME}" == "lifebot" ] && {
+  corrade=
+  [ "${CORRADE_BOT_NAME}" ] && {
+    if [ "${BOT_NAME}" ]; then
+      # Both -c and -n were specified using the lifebot command, what to do?
+      # I guess if they are both the same then continue, otherwise exit with usage
+      [ "${CORRADE_BOT_NAME}" == "${BOT_NAME}" ] || {
+        echo "Both -c name and -n name cannot be specified when invoked using the lifebot command"
+        echo "Use the botctrl command to specify both -c and -n names, lifebot only controls LifeBots"
+        usage brief
+      }
+    else
+      BOT_NAME="${CORRADE_BOT_NAME}"
+    fi
+    CORRADE_BOT_NAME=
+  }
+}
 
 # Check for Name alias in ~/.botctrl
 [ "${BOT_NAME}" ] && {

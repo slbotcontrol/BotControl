@@ -21,6 +21,10 @@
 .PP
 botctrl - Manage LifeBots and Corrade Second Life bots from the command
 line
+.PP
+corrade - Manage Corrade Second Life bots from the command line
+.PP
+lifebot - Manage LifeBots Second Life bots from the command line
 .SS SYNOPSIS
 .PP
 botctrl [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k
@@ -44,16 +48,17 @@ The \f[V]botctrl\f[R] command is installed as
 \f[V]/usr/local/bin/botctrl\f[R] and symbolic links are created for the
 commands \f[V]/usr/local/bin/corrade\f[R] and
 \f[V]/usr/local/bin/lifebot\f[R].
-When invoked as \f[V]corrade\f[R] the command defaults to using the
-Corrade API to control your bots.
-When invoked as \f[V]lifebot\f[R] the command defaults to using the
-LifeBots API to control your bots.
-.PP
-All three commands, \f[V]botctrl\f[R], \f[V]corrade\f[R], and
-\f[V]lifebot\f[R], can be used to control either Corrade or LifeBots
-bobs simply by specifying the bot name with either
-\f[V]-c <Bot_Name>\f[R] to use the Corrade API or
-\f[V]-n <Bot_Name>\f[R] to use the LifeBots API.
+When invoked as \f[V]corrade\f[R] the command uses the Corrade API to
+control Corrade bots.
+When invoked as \f[V]lifebot\f[R] the command uses the LifeBots API to
+control LifeBots bots.
+When invoked as \f[V]botctrl\f[R] the command can control either Corrade
+or LifeBots bots, determining which API to use based on how the bot name
+was specified on the command line:
+\f[V]botctrl -c \[dq]bot name\[dq] ...\f[R] indicates use the Corrade
+API to control a Corrade bot while
+\f[V]botctrl -n \[dq]bot name\[dq] ...\f[R] indicates control of a
+LifeBots bot.
 .PP
 See <https://lifebots.cloud> (https://lifebots.cloud) for more
 information on \f[V]LifeBots\f[R].

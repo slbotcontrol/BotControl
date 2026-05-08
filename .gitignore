@@ -5,6 +5,9 @@ tmp/
 *.swp
 *~.nib
 
+# Private scripts, do not add or commit
+Private/
+
 Thumbs.db
 ehthumbs.db
 Desktop.ini

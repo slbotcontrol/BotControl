@@ -95,5 +95,8 @@ printf "\nAdd /usr/local/bin to your execution PATH if it is not already include
 printf "\nConfigure botctrl by adding and editing the file ${HOME}/.botctrl"
 printf "\n\tSee ${SCRIPT_PATH}/BotControl/example_dot_botctrl"
 printf "\n\tfor a template to use for this file.\n"
+printf "\nView the botctrl manual with the command 'man botctrl'.\n"
+printf "\nView the botctrl usage message with the command 'botctrl -h'.\n"
+printf "\nView botctrl example invocations with the command 'botctrl -e'.\n"
 printf "\nSee ${SCRIPT_PATH}/BotControl/crontab.in"
 printf "\nfor example crontab entries to schedule bot activities.\n\n"
