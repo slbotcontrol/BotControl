@@ -17,7 +17,7 @@ botctrl - Manage LifeBots and Corrade Second Life bots from the command line
 botctrl [-deih] [-a action] [-A avatar] [-l location] [-n name] [-k apikey] [-T text] [-C channel]
   [-c corrade] [-F filter] [-M message] [-N name] [-O name] [-S subject] [-s secret] [-u uuid] [-z num]
 
-See the [Bots Github repository README](https://github.com/missyrestless/Bots)
+See the [BotControl Github repository README](https://github.com/missyrestless/BotControl)
 article for additional information on the `botctrl` command and associated tools.
 
 ## DESCRIPTION
@@ -104,7 +104,7 @@ The `botctrl` command is installed in `/usr/local/bin` along with some
 utility scripts for use with `cron` or other management systems. These
 utility scripts will need to be modified to suit your specific needs,
 configuration and bot names. You can modify the scripts in
-`LifeBots/bin/` and re-run `./install-botctrl`.
+`bin/` and re-run `./install`.
 
 Add `/usr/local/bin` to your execution `PATH` if it is not already included.
 
@@ -480,10 +480,10 @@ SOFTWARE.
 
 Submit bug reports online at:
 
-<https://github.com/missyrestless/Bots/issues>
+<https://github.com/missyrestless/BotControl/issues>
 
 ## SEE ALSO
 
 Full documentation and sources at:
 
-<https://github.com/missyrestless/Bots>
+<https://github.com/missyrestless/BotControl>
