@@ -183,11 +183,38 @@ Add an entry of the form
 .IP
 .nf
 \f[C]
-# LifeBots configuration file for use with the lifebot command line script
+#### BotControl Configuration ${HOME}/.botctrl
+#
+# Example BotControl configuration file for use with the botctrl command
 #
 # Configure API credentials for each bot and copy the file to ${HOME}/.botctrl
 # For security make the file accessible by owner only:
 #   chmod 600 ${HOME}/.botctrl
+#
+## CORRADE Command Control Configuration
+#
+#  To control Corrade bots from the command line you must configure a group, password, and URL
+#
+#  REQUIRED configuration parameters to control Corrade bots:
+#      CORRADE_GROUP  CORRADE_PASSW  CORRADE_URL
+#
+export CORRADE_GROUP=\[dq]<your-corrade-bot-group-name>\[dq]
+export CORRADE_PASSW=\[dq]<your-corrade-bot-group-password>\[dq]
+export CORRADE_URL=\[dq]https://your.corrade.server\[dq]
+export CORRADE_RANGE=\[dq]64\[dq]
+export API_URL_bot1_name=\[dq]${CORRADE_URL}/bot1/\[dq]
+export API_URL_bot2_name=\[dq]${CORRADE_URL}/bot2/\[dq]
+# Default Corrade Bot Name, this name will be used if none is specified
+export CO_BOT_NAME=\[aq]<bot1 name>\[aq]
+##
+## LIFEBOTS Command Control Configuration
+#
+#  To control LifeBots bots from the command line you must configure an API key and Bot secret
+#
+#  REQUIRED configuration parameters to control LifeBots bots:
+#      LB_API_KEY   LB_SECRET
+#      LifeBots bot secrets are unique to each bot. Aliases can be used for each, e.g.
+#          LB_SECRET_BOT1_NAME
 #
 # LifeBots Developer API Key
 export LB_API_KEY=\[aq]your-api-key\[aq]
@@ -201,31 +228,35 @@ export LB_SECRET_BOT3_NAME=\[aq]your-third-bot-secret\[aq]
 # For example, if the Bot\[aq]s name is \[dq]John Doe\[dq] then the entry would be:
 export LB_SECRET_John_Doe=\[aq]john-doe-bot-secret\[aq]
 
-# Default Bot Name and ID
+# Default LifeBots Bot Name and ID
 export LB_BOT_NAME=\[aq]your-default-bot-name\[aq]
 # LifeBots Bot ID
 export LB_BOT_ID_Bot_Name=\[aq]lifebots-bot-id\[aq]
-# Second Life Bot ID
-export SL_BOT_ID_Bot_Name=\[aq]secondlife-bot-id\[aq]
-# Login siton UUID
-export LOGIN_SITON_Bot_Name=\[dq]uuid-of-siton-object\[dq]
 
 # OAuth Applications
 # If you have configured OAuth applications then the client id and secret can be set here
 export LB_CLIENT_ID_app_name=\[aq]your-oauth-app-client-id\[aq]
 export LB_CLIENT_SECRET_app_name=\[aq]your-oauth-app-client-secret\[aq]
 
+#### COMMON Settings used by both Corrade & LifeBots bots
 # The following optional convenience entries are supported to allow
 # specifying an alias on the command line rather than a SLURL or UUID
-# All configured aliases can be listed with the command \[dq]lifebot -a alias\[dq]
+# All configured aliases can be listed with the command \[dq]botctrl -a alias\[dq]
 #
-## Bot name aliases for use with the \[dq]-n name\[dq] command line option
+# Second Life Bot ID
+export SL_BOT_ID_Bot_Name=\[aq]secondlife-bot-id\[aq]
+# Login siton UUID
+export LOGIN_SITON_Bot_Name=\[dq]uuid-of-siton-object\[dq]
+
+#### ALIASES
+##
+## Bot name aliases for use with the \[dq]-c name\[dq] and \[dq]-n name\[dq] command line options
 export BOT_NAME_bot1=\[dq]Bot1 Name\[dq]
 export BOT_NAME_bot2=\[dq]Bot2 Name\[dq]
 export BOT_NAME_bot3=\[dq]Bot3 Name\[dq]
 
-## Slurl aliases for use with the \[dq]-l location\[dq] command line option
-# SLURL aliases can be set for use with the location option, -l location
+## SLURL aliases for use with the \[dq]-l location\[dq] command line option
+# Slurl aliases can be set for use with the location option, -l location
 # For example, the following 2 SLURL aliases could be used with -l beach or -l club
 # to teleport the bot to the beach or the club specified in these SLURLs
 export SLURL_beach=\[dq]http://maps.secondlife.com/secondlife/BEACH_REGION_NAME/X/Y/Z\[dq]
@@ -238,13 +269,6 @@ export SLURL_club=\[dq]http://maps.secondlife.com/secondlife/CLUB_REGION%20NAME/
 # or -u couch to seat the bot on the specified object
 export UUID_dancepole=\[dq]dance-pole-object-uuid\[dq]
 export UUID_couch=\[dq]couch-object-uuid\[dq]
-
-# Corrade command control via LifeBots
-export CORRADE_GROUP=\[dq]<your-corrade-bot-group-name>\[dq]
-export CORRADE_PASSW=\[dq]<your-corrade-bot-group-password>\[dq]
-export CORRADE_URL=\[dq]https://your.corrade.server\[dq]
-export API_URL_bot1_name=\[dq]${CORRADE_URL}/bot1/\[dq]
-export API_URL_bot2_name=\[dq]${CORRADE_URL}/bot2/\[dq]
 \f[R]
 .fi
 .SS OPTIONS
@@ -323,9 +347,9 @@ activate_group, attach, batchavatarkeytoname, batchavatarnametokey,
 changeappearance, createlandmark,
 .IP \[bu] 2
 createnotecard, detach, fly, flyto, getattachments, getattachmentspath,
-getmembersonline, im,
+getmembersonline, im, cwd,
 .IP \[bu] 2
-inventory cwd, inventory list current outfit, inventory list outfits,
+inventory list current outfit, inventory list outfits, login, logout,
 pay avatar, pay object
 .IP \[bu] 2
 say_chat_channel, send_group_im, send_notice, sit, stand, teleport,

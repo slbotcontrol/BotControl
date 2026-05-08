@@ -336,8 +336,8 @@ list_supported_actions() {
   printf "\n  get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object"
   printf "\nSupported Corrade actions:"
   printf "\n  activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,"
-  printf "\n  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im,"
-  printf "\n  inventory cwd, inventory list current outfit, inventory list outfits, pay avatar, pay object"
+  printf "\n  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im, cwd"
+  printf "\n  inventory list current outfit, inventory list outfits, login, logout, pay avatar, pay object"
   printf "\n  say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear\n"
 }
 
@@ -413,6 +413,10 @@ fixup_Outfits_JSON() {
 
 send_corrade_request() {
   local cmd="$1"
+  [ "${cmd}" ] || {
+    echo "Empty command. Exiting."
+    usage
+  }
   # If the Corrade configuration specifies WAS ScriptLanguage:
   # cgroup=$(wasURLEscape "${CORRADE_GROUP}")
   # cpassw=$(wasURLEscape "${CORRADE_PASSW}")
@@ -420,10 +424,9 @@ send_corrade_request() {
   local cgroup="${CORRADE_GROUP}"
   local cpassw="${CORRADE_PASSW}"
   local cuuid=
-  [ "${cmd}" ] || {
-    echo "Empty command. Exiting."
-    usage
-  }
+  local POS=
+  local pos=
+  local rgn=
   COMMON="\"group\": \"${cgroup}\", \"password\": \"${cpassw}\""
   case "${cmd}" in
     activate|activate_group)
@@ -456,9 +459,10 @@ send_corrade_request() {
       COMMAND="\"command\": \"fly\", \"action\": \"${action}\""
       ;;
     flyto|fly_to)
-      local POS=$(get_coords "${LOCATION}")
-      local position="<${POS}>"
-      COMMAND="\"command\": \"flyto\", \"fly\": \"False\", \"position\": \"${position} + <0,0,5>\""
+      POS=$(get_coords "${LOCATION}")
+      loc=$(echo "${loc}" | awk -F ',' -v OFS=',' '{ print $(NF-2), $(NF-1), $NF }')
+      pos="<${POS}>"
+      COMMAND="\"command\": \"flyto\", \"fly\": \"False\", \"position\": \"${pos} + <0,0,5>\""
       ;;
     *attachments*)
       local comm="getattachments"
@@ -484,6 +488,16 @@ send_corrade_request() {
       ;;
     listinventory)
       COMMAND="\"command\": \"inventory\", \"action\": \"ls\""
+      ;;
+    login)
+      if [ "${LOCATION}" ] && [ "${LOCATION}" != "Last location" ]; then
+        POS=$(get_coords "${LOCATION}")
+        pos=$(echo "${POS}" | awk -F ',' -v OFS='/' '{ print $(NF-2), $(NF-1), $NF }')
+        rgn=$(echo "${LOCATION}" | awk -F '/' '{ print $(NF-3) }' | sed -e "s/%20/ /g")
+        COMMAND="\"command\": \"login\", \"location\": \"${rgn}/${pos}\""
+      else
+        COMMAND="\"command\": \"login\", \"location\": \"last\""
+      fi
       ;;
     name2key)
       COMMAND="\"command\": \"batchavatarnametokey\", \"avatars\": \"${SL_NAME}\""
@@ -538,18 +552,18 @@ send_corrade_request() {
       COMMAND="\"command\": \"getmembersonline\""
       ;;
     teleport)
-      local POS=$(get_coords "${LOCATION}")
-      local pos="<${POS}>"
-      local rgn=$(echo "${LOCATION}" | awk -F '/' '{ print $(NF-3) }' | sed -e "s/%20/ /g")
+      POS=$(get_coords "${LOCATION}")
+      pos="<${POS}>"
+      rgn=$(echo "${LOCATION}" | awk -F '/' '{ print $(NF-3) }' | sed -e "s/%20/ /g")
       COMMAND="\"command\": \"teleport\", \"entity\": \"region\", \"region\": \"${rgn}\", \"position\": \"${pos}\""
       ;;
     unwear|remove|takeoff)
       COMMAND="\"command\": \"unwear\", \"type\": \"UUID\", \"wearables\": \"${UUID}\""
       ;;
     walk*)
-      local POS=$(get_coords "${LOCATION}")
-      local position="<${POS}>"
-      COMMAND="\"command\": \"walkto\", \"position\": \"${position}\""
+      POS=$(get_coords "${LOCATION}")
+      pos="<${POS}>"
+      COMMAND="\"command\": \"walkto\", \"position\": \"${pos}\""
       ;;
     wear)
       COMMAND="\"command\": \"wear\", \"replace\": \"False\", \"wearables\": \"${WEARABLE}\""
@@ -559,7 +573,9 @@ send_corrade_request() {
       COMMAND="\"command\": \"changeappearance\", \"folder\": \"${outfit_folder}\""
       ;;
     *)
-      COMMAND=
+      # This catches commands like logout which have no additional parameters
+      # but it also passes commands that do require extra params and will fail
+      COMMAND="\"command\": \"${cmd}\""
       ;;
   esac
   [ "${COMMAND}" ] || {

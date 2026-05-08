@@ -148,8 +148,8 @@ Supported LifeBots actions:
   get_outfit, get_outfits, wear_outfit, get_balance, give_inventory, give_money, give_money_object
 Supported Corrade actions:
   activate_group, attach, batchavatarkeytoname, batchavatarnametokey, changeappearance, createlandmark,
-  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im,
-  inventory cwd, inventory list current outfit, inventory list outfits, pay avatar, pay object
+  createnotecard, detach, fly, flyto, getattachments, getattachmentspath, getmembersonline, im, cwd
+  inventory list current outfit, inventory list outfits, login, logout, pay avatar, pay object
   say_chat_channel, send_group_im, send_notice, sit, stand, teleport, touch, unwear, walkto, wear
 ```
 
