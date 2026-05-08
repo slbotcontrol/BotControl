@@ -90,6 +90,21 @@ do
   ${SUDO} ln -s ${scr} /usr/local/bin/${bas}
 done
 
+[ -d /usr/local/BotControl/lib ] || ${SUDO} mkdir -p /usr/local/BotControl/lib
+for fun in bin/lib/*
+do
+  [ "${fun}" == "bin/lib/*" ] && continue
+  bas=$(basename "${fun}")
+  if [ -d "${fun}" ]; then
+    ${SUDO} cp -a "${fun}" /usr/local/BotControl/lib
+    ${SUDO} chmod 755 /usr/local/BotControl/lib/${bas}
+    ${SUDO} chmod 644 /usr/local/BotControl/lib/${bas}/*
+  else
+    ${SUDO} cp "${fun}" /usr/local/BotControl/lib
+    ${SUDO} chmod 644 /usr/local/BotControl/lib/${bas}
+  fi
+done
+
 printf "\n\nInstallation of the botctrl command and associated scripts is complete.\n"
 printf "\nAdd /usr/local/bin to your execution PATH if it is not already included.\n"
 printf "\nConfigure botctrl by adding and editing the file ${HOME}/.botctrl"

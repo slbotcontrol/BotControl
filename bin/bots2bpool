@@ -30,17 +30,26 @@ do
 done
 [ "${needsleep}" ] && sleep 10
 
+# Send Anya to the beach pool float
+botctrl -a teleport -n Anya -l beach
+sleep 5
+botctrl -a sit -n Anya -u bfloat
+
 # Send Angelus and Easy to the beach pool
 for bot in Easy Angel
 do
+  [ -f /usr/local/BotControl/lib/online ] || {
+    echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+    exit 1
+  }
+  source /usr/local/BotControl/lib/online
+  co_bot_online ${bot} || {
+    echo "${bot} does not appear to be online"
+    continue
+  }
   botctrl -a stand -c ${bot} >/dev/null 2>&1
   sleep 1
   botctrl -a teleport -c ${bot} -l beach >/dev/null 2>&1
   sleep 5
   botctrl -a sit -c ${bot} -u bpool
 done
-
-# Send Anya to the beach pool float
-botctrl -a teleport -n Anya -l beach
-sleep 5
-botctrl -a sit -n Anya -u bfloat

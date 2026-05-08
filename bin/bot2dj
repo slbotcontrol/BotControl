@@ -78,11 +78,14 @@ case "${BOT}" in
     ;;
   Angel*|angel*)
     # Check if online
-    botctrl -a status -c Easy | grep Angel >/dev/null || {
-      botctrl -a status -c Angel | grep Angel >/dev/null || {
-        echo "Angelus does not appear to be online"
-        exit 1
-      }
+    [ -f /usr/local/BotControl/lib/online ] || {
+      echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+      exit 1
+    }
+    source /usr/local/BotControl/lib/online
+    co_bot_online Angel || {
+      echo "Angelus Portal does not appear to be online"
+      exit 1
     }
     botctrl -a stand -c Angel >/dev/null 2>&1
     sleep 1
@@ -92,11 +95,14 @@ case "${BOT}" in
     ;;
   Easy*|easy*)
     # Check if online
-    botctrl -a status -c Angel | grep Easy >/dev/null || {
-      botctrl -a status -c Easy | grep Easy >/dev/null || {
-        echo "Easy does not appear to be online"
-        exit 1
-      }
+    [ -f /usr/local/BotControl/lib/online ] || {
+      echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+      exit 1
+    }
+    source /usr/local/BotControl/lib/online
+    co_bot_online Easy || {
+      echo "Easy Islay does not appear to be online"
+      exit 1
     }
     botctrl -a stand -c Easy >/dev/null 2>&1
     sleep 1

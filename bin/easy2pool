@@ -35,12 +35,14 @@ if [ "$1" == "-l" ]; then
   botctrl -a sit -n Easy -u zlounger
 else
   # Check if online
-  botctrl -a status -c Angel | grep 'Easy Islay' >/dev/null || {
-    # Maybe Angel is not online
-    botctrl -a status -c Easy | grep 'Easy Islay' >/dev/null || {
-      echo "Easy Islay does not appear to be online"
-      exit 1
-    }
+  [ -f /usr/local/BotControl/lib/online ] || {
+    echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+    exit 1
+  }
+  source /usr/local/BotControl/lib/online
+  co_bot_online Easy || {
+    echo "Easy Islay does not appear to be online"
+    exit 1
   }
 
   # Send Easy to the right lounge chair

@@ -1,0 +1,13 @@
+co_bot_online() {
+  local slbot="$1"
+  # Check for Name alias in ~/.botctrl
+  local SL_NAME="${slbot}"
+  local botname=$(echo "${slbot}" | sed -e "s/ /_/g")
+  local envname="BOT_NAME_${botname}"
+  [ "${!envname}" ] && SL_NAME="${!envname}"
+  if botctrl -a status -c "${SL_NAME}" 2>&1 | grep 'parse error' >/dev/null; then
+    return 1
+  else
+    return 0
+  fi
+}

@@ -32,12 +32,14 @@ if [ "$1" == "-l" ]; then
   botctrl -a sit -n Angel -u slstool
 else
   # Check if online
-  botctrl -a status -c Easy | grep 'Angelus Portal' >/dev/null || {
-    # Maybe Easy is not online
-    botctrl -a status -c Angel | grep 'Angelus Portal' >/dev/null || {
-      echo "Angelus Portal does not appear to be online"
-      exit 1
-    }
+  [ -f /usr/local/BotControl/lib/online ] || {
+    echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+    exit 1
+  }
+  source /usr/local/BotControl/lib/online
+  co_bot_online Angel || {
+    echo "Angelus Portal does not appear to be online"
+    exit 1
   }
 
   botctrl -a stand -c Angel >/dev/null 2>&1

@@ -66,16 +66,14 @@ done
 for bot in ${CBOTS}
 do
   # Check if online
-  if [ "${bot}" == "Angel" ]; then
-    use="Easy"
-  else
-    use="Angel"
-  fi
-  botctrl -a status -c ${use} | grep ${bot} >/dev/null || {
-    botctrl -a status -c ${bot} | grep ${bot} >/dev/null || {
-      echo "${bot} does not appear to be online"
-      continue
-    }
+  [ -f /usr/local/BotControl/lib/online ] || {
+    echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+    exit 1
+  }
+  source /usr/local/BotControl/lib/online
+  co_bot_online ${bot} || {
+    echo "${bot} does not appear to be online"
+    continue
   }
 
   botctrl -a stand -c ${bot} >/dev/null 2>&1
