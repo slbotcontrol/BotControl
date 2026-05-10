@@ -34,7 +34,7 @@ do
   botctrl -a stand -n ${bot} >/dev/null 2>&1
   sleep 1
   botctrl -a teleport -n ${bot} -l beach >/dev/null 2>&1
-  sleep 8
+  sleep 10
   botctrl -a sit -n ${bot} -u barpole
 done
 
@@ -54,6 +54,6 @@ do
   botctrl -a stand -c ${bot} >/dev/null 2>&1
   sleep 1
   botctrl -a teleport -c ${bot} -l beach >/dev/null 2>&1
-  sleep 8
+  sleep 10
   botctrl -a sit -c ${bot} -u barpole
 done

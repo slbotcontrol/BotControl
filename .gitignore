@@ -9,7 +9,9 @@ tmp/
 Private/
 
 # My customized crontab entries
-crontab_my.in
+cron/cronjobs
+cron/crontab_my.in
+cron/crontab-models.in
 
 Thumbs.db
 ehthumbs.db

@@ -28,7 +28,7 @@ if [ "$1" == "-l" ]; then
 
   botctrl -a stand -n Easy >/dev/null 2>&1
   botctrl -a teleport -n Easy -l club
-  sleep 8
+  sleep 10
   botctrl -a sit -n Easy -u hottub
 else
   # Check if online
@@ -44,7 +44,7 @@ else
 
   botctrl -a stand -c Easy >/dev/null 2>&1
   botctrl -a teleport -c Easy -l club >/dev/null 2>&1
-  sleep 8
+  sleep 10
   botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1
   sleep 5
   botctrl -a sit -c Easy -u hottub

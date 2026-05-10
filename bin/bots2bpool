@@ -32,7 +32,7 @@ done
 
 # Send Anya to the beach pool float
 botctrl -a teleport -n Anya -l beach
-sleep 8
+sleep 10
 botctrl -a sit -n Anya -u bfloat
 
 # Send Angelus and Easy to the beach pool
@@ -50,6 +50,6 @@ do
   botctrl -a stand -c ${bot} >/dev/null 2>&1
   sleep 1
   botctrl -a teleport -c ${bot} -l beach >/dev/null 2>&1
-  sleep 8
+  sleep 10
   botctrl -a sit -c ${bot} -u bpool
 done
