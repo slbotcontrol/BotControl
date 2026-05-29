@@ -15,7 +15,7 @@
 # of the form LB_SECRET_BOT_NAME in order to support multiple bots
 #
 # Entries can specify a Slurl alias. For example:
-#   export SLURL_club="http://maps.secondlife.com/secondlife/Scylla/226/32/78"
+#   export SLURL_club="https://maps.secondlife.com/secondlife/Scylla/226/32/78"
 # A Slurl alias can be used with the -l command line argument, e.g. -l club
 #
 # Entries can also specify a UUID alias. For example:
@@ -94,7 +94,7 @@ usage() {
   printf "\n  Entries in ~/.botctrl can be LB_API_KEY, LB_SECRET, or entries"
   printf "\n  of the form LB_SECRET_BOT_NAME in order to support multiple bots"
   printf "\n  Entries can specify a Slurl alias. For example:"
-  printf "\n    export SLURL_club='http://maps.secondlife.com/secondlife/Scylla/226/32/78'"
+  printf "\n    export SLURL_club='https://maps.secondlife.com/secondlife/Scylla/226/32/78'"
   printf "\n  A Slurl alias can be used with the -l command line argument, e.g. -l club"
   printf "\n  Entries can also specify a UUID alias. For example:"
   printf "\n    export UUID_Mover='xxxxxxxx-yyyy-zzzz-aaaa-bbbbbbbbbbbb'"
@@ -197,7 +197,7 @@ examples() {
   printf "\nteleport : teleport bot to specified location"
   printf "\n\tExample : teleport bot John Doebot to the aliased location \"club\""
   printf "\n\tRequires an entry of the following form in $HOME/.botctrl"
-  printf "\n\t\texport SLURL_club=\"http://maps.secondlife.com/secondlife/Scylla/226/32/78\""
+  printf "\n\t\texport SLURL_club=\"https://maps.secondlife.com/secondlife/Scylla/226/32/78\""
   printf "\n\t${SCRIPT_NAME} -a teleport -n \"John Doebot\" -l club"
   printf "\ntouch_attachment : touch a specified bot attachment"
   printf "\n\tExample : bot John Doebot touch attachment named \"HUD Controller\""
@@ -248,7 +248,7 @@ is_valid_uuid() {
 # Regex to match the basic SLURL format
 # secondlife://RegionName/X/Y/Z (X, Y, Z are optional, and can be floats)
 # or
-# http://maps.secondlife.com/secondlife/RegionName/X/Y/Z
+# https://maps.secondlife.com/secondlife/RegionName/X/Y/Z
 is_valid_slurl() {
   local slurl="$1"
   local regex='secondlife://[-[:alnum:]\+&@#/%?=~_|!:,.;]*[-[:alnum:]\+&@#/%=~_|]'

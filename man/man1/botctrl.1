@@ -259,9 +259,9 @@ export BOT_NAME_bot3=\[dq]Bot3 Name\[dq]
 # Slurl aliases can be set for use with the location option, -l location
 # For example, the following 2 SLURL aliases could be used with -l beach or -l club
 # to teleport the bot to the beach or the club specified in these SLURLs
-export SLURL_beach=\[dq]http://maps.secondlife.com/secondlife/BEACH_REGION_NAME/X/Y/Z\[dq]
+export SLURL_beach=\[dq]https://maps.secondlife.com/secondlife/BEACH_REGION_NAME/X/Y/Z\[dq]
 # Urlencode spaces in the region name by using %20 instead of space
-export SLURL_club=\[dq]http://maps.secondlife.com/secondlife/CLUB_REGION%20NAME/X/Y/Z\[dq]
+export SLURL_club=\[dq]https://maps.secondlife.com/secondlife/CLUB_REGION%20NAME/X/Y/Z\[dq]
 
 ## UUID aliases for use with the \[dq]-u uuid\[dq] command line option
 # UUID aliases can be set for use with the UUID option, -u uuid
@@ -380,7 +380,7 @@ For example:
 .IP
 .nf
 \f[C]
-export SLURL_club=\[aq]http://maps.secondlife.com/secondlife/Scylla/226/32/78\[aq]
+export SLURL_club=\[aq]https://maps.secondlife.com/secondlife/Scylla/226/32/78\[aq]
 \f[R]
 .fi
 .PP
@@ -740,7 +740,7 @@ location \[dq]club\[dq]
 Requires an entry of the following form in \f[V]$HOME/.botctrl\f[R]
 .RS 2
 .IP \[bu] 2
-\f[V]export SLURL_club=\[dq]http://maps.secondlife.com/secondlife/Scylla/226/32/78\[dq]\f[R]
+\f[V]export SLURL_club=\[dq]https://maps.secondlife.com/secondlife/Scylla/226/32/78\[dq]\f[R]
 .RE
 .IP \[bu] 2
 \f[V]botctrl -a teleport -n \[dq]John Doebot\[dq] -l club\f[R]

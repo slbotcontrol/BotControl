@@ -70,8 +70,8 @@ deploy, modify, and distribute.
 
 `Corrade` and `LifeBots` bots managed by the `botctrl` command line and scheduled using
 the Unix `cron` facility can be viewed and interacted with in Second Life at the
-[Truth & Beauty Lab](http://maps.secondlife.com/secondlife/Brightbrook%20Isle/56/135/23)
-or [Club Truth & Beauty](http://maps.secondlife.com/secondlife/Scylla/226/32/78).
+[Truth & Beauty Lab](https://maps.secondlife.com/secondlife/Brightbrook%20Isle/56/135/23)
+or [Club Truth & Beauty](https://maps.secondlife.com/secondlife/Scylla/226/32/78).
 
 ### Corrade Overview
 
@@ -463,7 +463,7 @@ are supported by the `botctrl` command.
 - `teleport` : teleport bot to specified location
   - `Example` : teleport bot `John Doebot` to the aliased location "club"
   - Requires an entry of the following form in `$HOME/.botctrl`
-    - `export SLURL_club="http://maps.secondlife.com/secondlife/Scylla/226/32/78"`
+    - `export SLURL_club="https://maps.secondlife.com/secondlife/Scylla/226/32/78"`
   - `botctrl -a teleport -n "John Doebot" -l club`
 - `touch_attachment` : touch a specified bot attachment
   - `Example` : bot `John Doebot` touch attachment named "HUD Controller"
@@ -531,7 +531,7 @@ Environment:
   Entries in ~/.botctrl can be LB_API_KEY, LB_SECRET, or entries
   of the form LB_SECRET_BOT_NAME in order to support multiple bots
   Entries can specify a Slurl alias. For example:
-    export SLURL_club='http://maps.secondlife.com/secondlife/Scylla/226/32/78'
+    export SLURL_club='https://maps.secondlife.com/secondlife/Scylla/226/32/78'
   A Slurl alias can be used with the -l command line argument, e.g. -l club
   Entries can also specify a UUID alias. For example:
     export UUID_Mover='xxxxxxxx-yyyy-zzzz-aaaa-bbbbbbbbbbbb'
@@ -748,7 +748,7 @@ location alias and the `Easy` bot name alias:
 
 ```bash
 export BOT_NAME_Easy="Easy Islay"
-export SLURL_club="http://maps.secondlife.com/secondlife/Scylla/226/32/78"
+export SLURL_club="https://maps.secondlife.com/secondlife/Scylla/226/32/78"
 ```
 
 Aliases provide some convenience. For example, the command
@@ -760,7 +760,7 @@ botctrl -a teleport -n Easy -l club
 is just an easier way of issuing the command
 
 ```bash
-botctrl -a teleport -n "Easy Islay" -l "http://maps.secondlife.com/secondlife/Scylla/226/32/78"
+botctrl -a teleport -n "Easy Islay" -l "https://maps.secondlife.com/secondlife/Scylla/226/32/78"
 ```
 
 ### Using the JSON return as Input

@@ -29,7 +29,7 @@ Environment:
   Entries in ~/.botctrl can be LB_API_KEY, LB_SECRET, or entries
   of the form LB_SECRET_BOT_NAME in order to support multiple bots
   Entries can specify a Slurl alias. For example:
-    export SLURL_club='http://maps.secondlife.com/secondlife/Scylla/226/32/78'
+    export SLURL_club='https://maps.secondlife.com/secondlife/Scylla/226/32/78'
   A Slurl alias can be used with the -l command line argument, e.g. -l club
   Entries can also specify a UUID alias. For example:
     export UUID_Mover='xxxxxxxx-yyyy-zzzz-aaaa-bbbbbbbbbbbb'

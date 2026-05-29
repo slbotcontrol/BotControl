@@ -210,9 +210,9 @@ export BOT_NAME_bot3="Bot3 Name"
 # Slurl aliases can be set for use with the location option, -l location
 # For example, the following 2 SLURL aliases could be used with -l beach or -l club
 # to teleport the bot to the beach or the club specified in these SLURLs
-export SLURL_beach="http://maps.secondlife.com/secondlife/BEACH_REGION_NAME/X/Y/Z"
+export SLURL_beach="https://maps.secondlife.com/secondlife/BEACH_REGION_NAME/X/Y/Z"
 # Urlencode spaces in the region name by using %20 instead of space
-export SLURL_club="http://maps.secondlife.com/secondlife/CLUB_REGION%20NAME/X/Y/Z"
+export SLURL_club="https://maps.secondlife.com/secondlife/CLUB_REGION%20NAME/X/Y/Z"
 
 ## UUID aliases for use with the "-u uuid" command line option
 # UUID aliases can be set for use with the UUID option, -u uuid
@@ -290,7 +290,7 @@ Entries in `~/.botctrl` can be `LB_API_KEY`, `LB_SECRET`, or entries of the form
 Entries can specify a Slurl alias. For example:
 
 ```sh
-export SLURL_club='http://maps.secondlife.com/secondlife/Scylla/226/32/78'
+export SLURL_club='https://maps.secondlife.com/secondlife/Scylla/226/32/78'
 ```
 
 A Slurl alias can be used with the `-l` command line argument, e.g. `-l club`
@@ -459,7 +459,7 @@ are supported by the `botctrl` command.
 - `teleport` : teleport bot to specified location
   - `Example` : teleport bot `John Doebot` to the aliased location "club"
   - Requires an entry of the following form in `$HOME/.botctrl`
-    - `export SLURL_club="http://maps.secondlife.com/secondlife/Scylla/226/32/78"`
+    - `export SLURL_club="https://maps.secondlife.com/secondlife/Scylla/226/32/78"`
   - `botctrl -a teleport -n "John Doebot" -l club`
 - `touch_attachment` : touch a specified bot attachment
   - `Example` : bot `John Doebot` touch attachment named "HUD Controller"
