@@ -364,7 +364,7 @@ list_supported_actions() {
   printf "\nSupported actions for Corrade only:"
   printf "\n  anim_start, anim_stop, attach, conference, conference_detail, conference_list, createlandmark,"
   printf "\n  currentsim, detach, fly, flyto, gesture, getattachmentspath, getavatarpickdata, getgroupmemberdata,"
-  printf "\n  get_hoverheight, getmembersonline, getregiontop, getselfdata, inventory cwd, key2displayname,"
+  printf "\n  get_hoverheight, getmembersonline, getregiontop, getselfdata, http, inventory cwd, key2displayname,"
   printf "\n  networkmanagerdata, playsound\n"
 }
 
@@ -513,6 +513,27 @@ send_corrade_request() {
       ;;
     list*confer*|confer*list*)
       COMMAND="\"command\": \"conference\", \"action\": \"list\""
+      ;;
+    http|Http|HTTP)
+      case "${TEXT}" in
+        get|Get|GET)
+          TEXT="get"
+          ;;
+        post|Post|POST)
+          TEXT="post"
+          ;;
+        delete|Delete|DEL*)
+          TEXT="delete"
+          ;;
+        put|Put|PUT)
+          TEXT="put"
+          ;;
+        *)
+          erro "The ${cmd} action requires a request action, get post delete or put, specified with -T action"
+          usage brief
+          ;;
+      esac
+      COMMAND="\"command\": \"HTTP\", \"action\": \"${TEXT}\", \"type\": \"text\", \"URL\": \"${MESSAGE}\""
       ;;
     det*confer*|confer*det*)
       [ "${UUID}" ] || {
@@ -1647,6 +1668,23 @@ case "${ACTION}" in
       send_request "name2key" | jq -r .
     else
       send_request "name2key"
+    fi
+    ;;
+  http|Http|HTTP)
+    show_usage=
+    [ "${MESSAGE}" ] || {
+      erro "The ${ACTION} action requires a URL request specified with -M url"
+      show_usage=1
+    }
+    [ "${TEXT}" ] || {
+      erro "The ${ACTION} action requires a request action specified with -T action"
+      show_usage=1
+    }
+    [ "${show_usage}" ] && usage brief
+    if [ "${have_jq}" ]; then
+      send_request "HTTP" | jq -r .
+    else
+      send_request "HTTP"
     fi
     ;;
   im|instantm*)

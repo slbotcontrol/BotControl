@@ -281,7 +281,7 @@ The following command line options are available with `botctrl`:
   - anim_start, anim_stop, attach, conference, conference_detail, conference_list,
   - createlandmark, currentsim, detach, fly, flyto, gesture, getattachmentspath,
   - getavatarpickdata, getgroupmemberdata, get_hoverheight, getmembersonline, getregiontop,
-  - getselfdata, inventory cwd, key2displayname, networkmanagerdata, playsound
+  - getselfdata, http, inventory cwd, key2displayname, networkmanagerdata, playsound
 
 ### ENVIRONMENT
 
