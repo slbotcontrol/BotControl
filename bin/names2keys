@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+#
+# names2keys - convert a list of avatar names to a list of avatar UUIDs
+#
+# Reads a file with avatar names, one per line, and outputs the avatar UUIDs
+#
+# Usage: names2keys [-c|l] [-n name] [-f /path/to/file ]
+#
+# Default Bot
+DEF_BOT="Easy"
+# Default Filename
+DEF_FILE="Customer_Names"
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_lb=$(type -p botctrl)
+[ "${have_lb}" ] || {
+  echo "ERROR: cannot locate botctrl in PATH"
+  exit 1
+}
+
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || {
+  echo "ERROR: cannot locate jq in PATH"
+  exit 1
+}
+
+usage() {
+  printf "\nUsage: names2keys [-c|l] [-n name] [-f /path/to/file] [-h]"
+  printf "\nWhere:"
+  printf "\n\t-c indicates use Corrade API"
+  printf "\n\t-l indicates use LifeBots API"
+  printf "\n\t-n name specifies the BOT name [default: ${DEF_BOT}]"
+  printf "\n\t-f file specifies the path to a file with names [default: ${DEF_FILE}]"
+  printf "\n\t-h displays this usage message and exits\n\n"
+  exit 1
+}
+
+BOT= FILE= CORRADE= LIFEBOT=
+while getopts ":cln:f:h" flag; do
+  case $flag in
+    c)
+      CORRADE=1
+      ;;
+    l)
+      LIFEBOT=1
+      ;;
+    n)
+      BOT="$OPTARG"
+      ;;
+    f)
+      FILE="$OPTARG"
+      ;;
+    h)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ "${CORRADE}" ] && [ "${LIFEBOT}" ] && {
+  echo "Only one of -c and -l can be specified. Exiting."
+  exit 1
+}
+[ "${CORRADE}" ] || [ "${LIFEBOT}" ] || {
+  echo "One of -c or -l must be given in order to specify the API. Exiting."
+  exit 1
+}
+
+[ "${BOT}" ] || BOT="${DEF_BOT}"
+[ "${FILE}" ] || FILE="${DEF_FILE}"
+
+# Check if Bot is online and if not, login
+[ "${LIFEBOT}" ] && {
+  lifebot -a status -n ${BOT} | jq -r '.status' | grep -i online >/dev/null || {
+    echo "Logging in ${BOT} ..."
+    lifebot -a login -n ${BOT}
+    sleep 10
+  }
+}
+
+if [ -r "${FILE}" ]; then
+  while read SL_NAME
+  do
+    [ "${SL_NAME}" ] && {
+      if [ "${CORRADE}" ]; then
+        SL_UUID=$(botctrl -a name2key -c "${BOT}" -N "${SL_NAME}" | jq -r '.data[1]')
+      else
+        SL_UUID=$(botctrl -a name2key -n "${BOT}" -N "${SL_NAME}" | jq -r '.key') 
+      fi
+      [ "${SL_UUID}" ] || {
+        echo "ERROR: cannot get UUID for Second Life avatar name ${SL_NAME}"
+        continue
+      }
+      [ "${SL_UUID}" == "null" ] && {
+        echo "ERROR: null UUID for Second Life avatar name ${SL_NAME}"
+        continue
+      }
+      echo "${SL_UUID}"
+    }
+  done < <(cat "${FILE}")
+else
+  echo "${FILE} does not exist or is not readable. Exiting."
+  usage
+fi
