@@ -36,7 +36,7 @@ botctrl -a stand -c Angel >/dev/null 2>&1
 sleep 1
 botctrl -a teleport -c Angel -l club
 sleep 10
-botctrl -a sit -c Angel -u rpole
+botctrl -a sit -c Angel -u bars
 
 # Send Anya to her dance pole
 botctrl -a teleport -n Anya -l club
