@@ -12,7 +12,33 @@
 # JSON, displaying only a list of the outfit names. If jq not available we use grep.
 
 # Replace 'Easy' with your Corrade bot name or an alias for the name you have configured
-BOT_NAME="Easy"
+DEF_BOT_NAME="Easy"
+BOT_NAME=
+
+usage() {
+  printf "\nUsage: get_corrade_outfits [-n NAME]"
+  printf "\nWhere:"
+  printf "\n\t-n NAME specifies a Corrade bot name [Default: ${DEF_BOT_NAME}]\n"
+  exit 1
+}
+
+while getopts ":n:u" flag; do
+  case $flag in
+    n)
+      BOT_NAME="$OPTARG"
+      ;;
+    u)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ "${BOT_NAME}" ] || BOT_NAME="${DEF_BOT_NAME}"
 
 have_jq=$(type -p jq)
 if [ "${have_jq}" ]; then

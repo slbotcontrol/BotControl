@@ -56,4 +56,15 @@ do
   botctrl -a teleport -c ${bot} -l beach >/dev/null 2>&1
   sleep 10
   botctrl -a sit -c ${bot} -u slstool
+  case ${bot} in
+    Angel*|angel*|Angelus*)
+      botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
+      ;;
+    Easy*|easy*)
+      botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1
+      ;;
+    *)
+      echo "Unsupported bot ${bot}"
+      ;;
+  esac
 done

@@ -45,5 +45,7 @@ else
   botctrl -a stand -c Angel >/dev/null 2>&1
   botctrl -a teleport -c Angel -l beach >/dev/null 2>&1
   sleep 5
+  botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Swim **' >/dev/null 2>&1
+  sleep 5
   botctrl -a sit -c Angel -u slstool
 fi

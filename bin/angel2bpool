@@ -11,7 +11,7 @@ have_lb=$(type -p botctrl)
   exit 1
 }
 
-# Run with -l argument to control Easy Islay as a LifeBots Bot
+# Run with -l argument to control Angelus Portal as a LifeBots Bot
 # Default operation is to treat her like a Corrade bot
 if [ "$1" == "-l" ]; then
   have_jq=$(type -p jq)
@@ -20,16 +20,19 @@ if [ "$1" == "-l" ]; then
     exit 1
   }
 
-  # Check if Bot is online and if not, login
-  botctrl -a status -n Angel | jq -r '.status' | grep -i online >/dev/null || {
-    botctrl -a login -n Angel -l club
-    sleep 10
-  }
-
+  # Check if Bots are online and if not, login
+  needsleep=
   botctrl -a stand -n Angel >/dev/null 2>&1
-  botctrl -a teleport -n Angel -l club
-  sleep 10
-  botctrl -a sit -n Angel -u bars
+  botctrl -a status -n Angel | jq -r '.status' | grep -i online >/dev/null || {
+    botctrl -a login -n Angel -l beach
+    needsleep=1
+  }
+  [ "${needsleep}" ] && sleep 20
+
+  # Send Angel to the beach pool float
+  botctrl -a teleport -n Angel -l beach >/dev/null 2>&1
+  sleep 5
+  botctrl -a sit -n Angel -u bpool
 else
   # Check if online
   [ -f /usr/local/BotControl/lib/online ] || {
@@ -42,10 +45,11 @@ else
     exit 1
   }
 
+  # Send Angel to the beach pool float
   botctrl -a stand -c Angel >/dev/null 2>&1
-  botctrl -a teleport -c Angel -l club >/dev/null 2>&1
-  sleep 10
+  botctrl -a teleport -c Angel -l beach >/dev/null 2>&1
+  sleep 5
   botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
   sleep 5
-  botctrl -a sit -c Angel -u bars
+  botctrl -a sit -c Angel -u bpool
 fi

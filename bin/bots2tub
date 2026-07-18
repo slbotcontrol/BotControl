@@ -37,6 +37,8 @@ sleep 1
 botctrl -a teleport -c Angel -l club
 sleep 10
 botctrl -a sit -c Angel -u hottub
+sleep 1
+botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
 
 # Send Anya to her dance pole
 botctrl -a teleport -n Anya -l club
@@ -49,3 +51,5 @@ sleep 1
 botctrl -a teleport -c Easy -l club
 sleep 10
 botctrl -a sit -c Easy -u hottub
+sleep 1
+botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1

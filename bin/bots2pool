@@ -36,6 +36,8 @@ sleep 1
 botctrl -a teleport -c Angel -l zen >/dev/null 2>&1
 sleep 10
 botctrl -a sit -c Angel -u hottub
+sleep 1
+botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
 
 # Send Anya to the pool float
 botctrl -a teleport -n Anya -l zen
@@ -48,3 +50,5 @@ sleep 1
 botctrl -a teleport -c Easy -l zen
 sleep 10
 botctrl -a sit -c Easy -u zlounger
+sleep 1
+botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1

@@ -11,34 +11,8 @@ have_lb=$(type -p botctrl)
   exit 1
 }
 
-have_jq=$(type -p jq)
-[ "${have_jq}" ] || {
-  echo "ERROR: cannot locate jq in PATH"
-  exit 1
-}
-
-# Check if Bots are online and if not, login
-needsleep=
-for bot in Anya
-do
-  botctrl -a stand -n ${bot} >/dev/null 2>&1
-  botctrl -a status -n ${bot} | jq -r '.status' | grep -i online >/dev/null || {
-    botctrl -a login -n ${bot} -l beach
-    needsleep=1
-  }
-done
-[ "${needsleep}" ] && sleep 10
-
-for bot in Anya
-do
-  botctrl -a stand -n ${bot} >/dev/null 2>&1
-  sleep 1
-  botctrl -a teleport -n ${bot} -l beach >/dev/null 2>&1
-  sleep 10
-  botctrl -a sit -n ${bot} -u beachbar
-done
-
-for bot in Angel Easy
+BOTS="Angel Easy"
+for bot in ${BOTS}
 do
   # Check if online
   [ -f /usr/local/BotControl/lib/online ] || {
@@ -51,11 +25,6 @@ do
     continue
   }
 
-  botctrl -a stand -c ${bot} >/dev/null 2>&1
-  sleep 1
-  botctrl -a teleport -c ${bot} -l beach >/dev/null 2>&1
-  sleep 10
-  botctrl -a sit -c ${bot} -u beachbar
   case ${bot} in
     Angel*|angel*|Angelus*)
       botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Swim **' >/dev/null 2>&1
