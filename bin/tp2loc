@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+#
+# tp2loc - send a bot to a specified slurl
+#
+# Usage: tp2loc -l slurl -b <bot name>
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_lb=$(type -p botctrl)
+[ "${have_lb}" ] || {
+  echo "ERROR: cannot locate botctrl in PATH"
+  exit 1
+}
+
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || {
+  echo "ERROR: cannot locate jq in PATH"
+  exit 1
+}
+
+usage() {
+  printf "\nUsage: bot2bar -b <bot name> -l slurl\n\n"
+  exit 1
+}
+
+slurl=
+bot=
+while getopts ":b:l:u" flag; do
+  case $flag in
+    b)
+      bot="$OPTARG"
+      ;;
+    l)
+      slurl="$OPTARG"
+      ;;
+    u)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+[ "${bot}" ] && [ "${slurl}" ] || usage
+
+case "${bot}" in
+  Anya*|anya*)
+    # Check if Bot is online and if not, login
+    botctrl -a status -n Anya | jq -r '.status' | grep -i online >/dev/null || {
+      botctrl -a login -n Anya -l ${slurl}
+      sleep 10
+    }
+    botctrl -a stand -n Anya >/dev/null 2>&1
+    botctrl -a teleport -n Anya -l ${slurl} >/dev/null 2>&1
+    ;;
+  Angel*|angel*)
+    # Check if online
+    [ -f /usr/local/BotControl/lib/online ] || {
+      echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+      exit 1
+    }
+    source /usr/local/BotControl/lib/online
+    co_bot_online Angel || {
+      echo "Angelus Portal does not appear to be online"
+      exit 1
+    }
+    botctrl -a stand -c Angel >/dev/null 2>&1
+    sleep 1
+    botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Swim **' >/dev/null 2>&1
+    sleep 6
+    botctrl -a teleport -c Angel -l ${slurl} >/dev/null 2>&1
+    ;;
+  Easy*|easy*)
+    # Check if online
+    [ -f /usr/local/BotControl/lib/online ] || {
+      echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
+      exit 1
+    }
+    source /usr/local/BotControl/lib/online
+    co_bot_online Easy || {
+      echo "Easy Islay does not appear to be online"
+      exit 1
+    }
+    botctrl -a stand -c Easy >/dev/null 2>&1
+    sleep 1
+    botctrl -a wear_outfit -c Easy -O '** Legacy Basic Purple Top & Jeans **' >/dev/null 2>&1
+    sleep 6
+    botctrl -a teleport -c Easy -l ${slurl} >/dev/null 2>&1
+    ;;
+esac
