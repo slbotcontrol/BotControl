@@ -33,55 +33,57 @@ have_jq=$(type -p jq)
   exit 1
 }
 
-# Check if Bots are online and if not, login
-needsleep=
-for bot in ${LBOTS}
-do
-  botctrl -a status -n ${bot} | jq -r '.status' | grep -i online >/dev/null || {
-    botctrl -a login -n ${bot} -l "${LOC}"
+usage() {
+  printf "\nUsage: bots2clubdance [-a] [-b] [-e]"
+  printf "\nWhere:"
+  printf "\n\t-a indicates send Anya to dance"
+  printf "\n\t-b indicates send Angel to dance"
+  printf "\n\t-e indicates send Easy to dance\n"
+  exit 1
+}
+
+send_lb() {
+  lbot="$1"
+  needsleep=
+  botctrl -a status -n ${lbot} | jq -r '.status' | grep -i online >/dev/null || {
+    botctrl -a login -n ${lbot} -l "${LOC}"
     needsleep=1
   }
-done
-[ "${needsleep}" ] && sleep 20
+  [ "${needsleep}" ] && sleep 20
 
-# Send all Bots to the dance floor and dance
-needsleep=
-for bot in ${LBOTS}
-do
-  botctrl -a stand -n ${bot} >/dev/null 2>&1
+  # Send Bot to the dance floor and dance
+  needsleep=
+  botctrl -a stand -n ${lbot} >/dev/null 2>&1
   sleep 1
-  botctrl -a status -n ${bot} | jq -r '.location' | grep "${REGION}" >/dev/null || {
-    botctrl -a teleport -n ${bot} -l "${LOC}"
+  botctrl -a status -n ${lbot} | jq -r '.location' | grep "${REGION}" >/dev/null || {
+    botctrl -a teleport -n ${lbot} -l "${LOC}"
     needsleep=1
   }
-done
-[ "${needsleep}" ] && sleep 10
+  [ "${needsleep}" ] && sleep 10
 
-# Sit or Touch the object to dance
-for bot in ${LBOTS}
-do
-  botctrl -a ${ACTION} -n ${bot} -u ${UUID}
-done
+  # Sit or Touch the object to dance
+  botctrl -a ${ACTION} -n ${lbot} -u ${UUID}
+}
 
-for bot in ${CBOTS}
-do
+send_co() {
+  cbot="$1"
   # Check if online
   [ -f /usr/local/BotControl/lib/online ] || {
     echo "ERROR: cannot locate /usr/local/BotControl/lib/online"
     exit 1
   }
   source /usr/local/BotControl/lib/online
-  co_bot_online ${bot} || {
-    echo "${bot} does not appear to be online"
+  co_bot_online ${cbot} || {
+    echo "${cbot} does not appear to be online"
     continue
   }
 
-  botctrl -a stand -c ${bot} >/dev/null 2>&1
+  botctrl -a stand -c ${cbot} >/dev/null 2>&1
   sleep 1
-  botctrl -a teleport -c ${bot} -l "${LOC}" >/dev/null 2>&1
+  botctrl -a teleport -c ${cbot} -l "${LOC}" >/dev/null 2>&1
   sleep 10
-  botctrl -a ${ACTION} -c ${bot} -u ${UUID}
-  case ${bot} in
+  botctrl -a ${ACTION} -c ${cbot} -u ${UUID}
+  case ${cbot} in
     Angel*|angel*|Angelus*)
       botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
       ;;
@@ -89,7 +91,49 @@ do
       botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1
       ;;
     *)
-      echo "Unsupported bot ${bot}"
+      echo "Unsupported bot ${cbot}"
+      ;;
+  esac
+}
+
+ANYA= ANGEL= EASY= BOTARG=
+while getopts ":abeu" flag; do
+  case $flag in
+    a)
+      ANYA=1
+      BOTARG=1
+      ;;
+    b)
+      ANGEL=1
+      BOTARG=1
+      ;;
+    e)
+      EASY=1
+      BOTARG=1
+      ;;
+    u)
+      usage
+      ;;
+    \?)
+      echo "Invalid option: $flag"
+      usage
       ;;
   esac
 done
+shift $(( OPTIND - 1 ))
+
+if [ "${BOTARG}" ]; then
+  [ "${ANYA}" ] && send_lb Anya
+  [ "${ANGEL}" ] && send_co Angel
+  [ "${EASY}" ] && send_co Easy
+else
+  for bot in ${LBOTS}
+  do
+    send_lb ${bot}
+  done
+
+  for bot in ${CBOTS}
+  do
+    send_co ${bot}
+  done
+fi
