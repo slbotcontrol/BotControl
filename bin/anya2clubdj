@@ -48,3 +48,4 @@ else
   botctrl -a teleport -n Anya -l club
   sleep 5
   botctrl -a sit -n Anya -u clubdj
+fi
