@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_lb=$(type -p botctrl)
+[ "${have_lb}" ] || {
+  echo "ERROR: cannot locate botctrl in PATH"
+  exit 1
+}
+
+# Move Anya off this couch and to the pole to make room
+botctrl -a stand -n Anya >/dev/null 2>&1
+botctrl -a teleport -n Anya -l club
+sleep 10
+botctrl -a sit -n Anya -u lpole
+
+botctrl -a stand -c Angel >/dev/null 2>&1
+botctrl -a teleport -c Angel -l club
+sleep 10
+botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
+sleep 5
+botctrl -a sit -c Angel -u lcouch
+
+botctrl -a stand -c Easy >/dev/null 2>&1
+botctrl -a teleport -c Easy -l club >/dev/null 2>&1
+sleep 10
+botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1
+sleep 5
+botctrl -a sit -c Easy -u lcouch
