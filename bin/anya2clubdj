@@ -27,9 +27,7 @@ if [ "$1" == "-c" ]; then
 
   botctrl -a stand -c Anya >/dev/null 2>&1
   botctrl -a teleport -c Anya -l club >/dev/null 2>&1
-  sleep 5
-  botctrl -a wear_outfit -c Anya -O '** Legacy Basic Purple Top & Jeans **' >/dev/null 2>&1
-  sleep 5
+  sleep 10
   botctrl -a sit -c Anya -u clubdj
 else
   have_jq=$(type -p jq)

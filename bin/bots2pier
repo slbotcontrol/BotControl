@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+export PATH="/usr/local/bin:${PATH}"
+[ -d /opt/homebrew/bin ] && {
+  export PATH="/opt/homebrew/bin:${PATH}"
+}
+
+have_lb=$(type -p botctrl)
+[ "${have_lb}" ] || {
+  echo "ERROR: cannot locate botctrl in PATH"
+  exit 1
+}
+
+have_jq=$(type -p jq)
+[ "${have_jq}" ] || {
+  echo "ERROR: cannot locate jq in PATH"
+  exit 1
+}
+
+# Send Angelus to his dance pole
+botctrl -a stand -c Angel >/dev/null 2>&1
+sleep 1
+botctrl -a teleport -c Angel -l beachbar
+sleep 10
+botctrl -a sit -c Angel -u pier
+sleep 1
+botctrl -a wear_outfit -c Angel -O '** Legacy Basic Kai Nude **' >/dev/null 2>&1
+
+# Send Easy to her dance pole
+botctrl -a stand -c Easy >/dev/null 2>&1
+sleep 1
+botctrl -a teleport -c Easy -l beachbar
+sleep 10
+botctrl -a sit -c Easy -u pier
+sleep 1
+botctrl -a wear_outfit -c Easy -O '** Legacy Basic Nude **' >/dev/null 2>&1
